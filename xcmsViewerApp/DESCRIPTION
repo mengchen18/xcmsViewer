@@ -1,0 +1,13 @@
+Package: xcmsViewerApp
+Type: Package
+Title: xsms viewer
+Version: 0.1.1
+Date: 2020-02-07
+Author: Chen Meng
+Maintainer: Chen Meng <mengchen18@gmail.com>
+Description: a shiny app visualizing xcms and annotation data. 
+License: GPL (>= 2)
+Depends: R (>= 3.5.0)
+Imports: DT, dplyr, fastmatch, shiny, shinythemes, graphics, stats, beeswarm, grDevices, randomcoloR
+Encoding: UTF-8
+RoxygenNote: 6.1.1
