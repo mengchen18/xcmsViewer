@@ -15,6 +15,7 @@ xcmsViewer(dir, ...)
 Start xcmsViewer app
 }
 \examples{
-# f <- system.file(package = "xcmsViewerApp", "inst/data/00_exampleData_processed.RDS")
+# library(xcmsViewerApp)
+# f <- system.file(package = "xcmsViewerApp", "extdata")
 # xcmsViewer(f)
 }

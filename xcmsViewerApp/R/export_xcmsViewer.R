@@ -7,7 +7,8 @@
 #' @importFrom beeswarm beeswarm
 #' @importFrom grDevices rgb
 #' @examples 
-#' # f <- system.file(package = "xcmsViewerApp", "inst/data/00_exampleData_processed.RDS")
+#' # library(xcmsViewerApp)
+#' # f <- system.file(package = "xcmsViewerApp", "extdata")
 #' # xcmsViewer(f)
 
 xcmsViewer <- function(dir, ...) {
