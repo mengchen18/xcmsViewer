@@ -56,7 +56,13 @@
     
 }
 
-# internal function used by mirrorPlotModule
+#' internal function used by mirrorPlotModule
+#' @description exported because it has been by the xcmsViewerProcess package,
+#'   user should use \link{mirrorPlot} instead
+#' @param peak.upper the upper peak
+#' @param peak.lower the lower peak
+#' @param ppmtol mass tolerance (in ppm) comparing the upper and lower peaks 
+#' @export
 .prep_mirrorPlot <- function(peak.upper, peak.lower=NULL, ppmtol = 10) {
   
   if (is.null(peak.lower)) {
