@@ -4,10 +4,10 @@
 #' @param massTab a data.frame of mass table having at least one column named as "monoisotopic_molecular_weight"
 #' @param refSpectra reference MS2 spectra used annotate the experimental MS2 spectra
 #' @param ... other parameters passed to bplapply 
-#' @importFrom BiocParallel bplapply
 #' @importFrom fastmatch %fin%
 #' @import MAIT
 #' @import xcms
+#' @import BiocParallel
 #' @export
 #' 
 summarizeExp <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra = NULL, ...) {
