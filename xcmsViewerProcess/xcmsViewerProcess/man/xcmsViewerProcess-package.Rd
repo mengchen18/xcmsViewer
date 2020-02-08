@@ -1,0 +1,34 @@
+\name{xcmsViewerProcess-package}
+\alias{xcmsViewerProcess-package}
+\alias{xcmsViewerProcess}
+\docType{package}
+\title{
+\packageTitle{xcmsViewerProcess}
+}
+\description{
+\packageDescription{xcmsViewerProcess}
+}
+\details{
+
+The DESCRIPTION file:
+\packageDESCRIPTION{xcmsViewerProcess}
+\packageIndices{xcmsViewerProcess}
+~~ An overview of how to use the package, including the most important functions ~~
+}
+\author{
+\packageAuthor{xcmsViewerProcess}
+
+Maintainer: \packageMaintainer{xcmsViewerProcess}
+}
+\references{
+~~ Literature or other references for background information ~~
+}
+~~ Optionally other standard keywords, one per line, from file KEYWORDS in the R documentation directory ~~
+\keyword{ package }
+\seealso{
+~~ Optional links to other man pages, e.g. ~~
+~~ \code{\link[<pkg>:<pkg>-package]{<pkg>}} ~~
+}
+\examples{
+~~ simple examples of the most important functions ~~
+}

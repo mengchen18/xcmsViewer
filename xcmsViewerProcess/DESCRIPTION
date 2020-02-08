@@ -1,0 +1,13 @@
+Package: xcmsViewerProcess
+Type: Package
+Title: xcmsViewerProcess
+Version: 0.1.2
+Date: 2020-02-08
+Author: Chen Meng
+Maintainer: Chen Meng <mengchen18@gmail.com>
+Description: Prepare data for xcmsViewerApp.
+License: GPL (>= 2)
+Depends: R (>= 3.5.0)
+Imports: BiocParallel, MSnbase, dplyr, fastmatch, minpack.lm, reshape2, xcms, MAIT, utils, xcmsViewerApp, Biobase
+Encoding: UTF-8
+RoxygenNote: 6.1.1
