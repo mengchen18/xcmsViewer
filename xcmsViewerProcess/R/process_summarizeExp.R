@@ -116,8 +116,12 @@ summarizeExp <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra 
       ms2a <- do.call(rbind, ms2an)
       colnames(ms2a) <- gsub("-", "_", colnames(ms2a))
       ap <- unique(ms2a$annot_peaks)
+
+      fmatch(ap, refSpectra$meta$id2)
+
       ail <- list(
-        meta = refSpectra$meta[fmatch(ap, refSpectra$meta$id2), ],
+        # meta = refSpectra$meta[fmatch(ap, refSpectra$meta$id2), ],
+        meta = refSpectra$meta[refSpectra$meta$id2 %fin% ap, ],
         peakList = refSpectra$peakList[ap]
       )
       colnames(ail$meta) <- gsub("-", "_", colnames(ail$meta))
