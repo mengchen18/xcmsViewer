@@ -10,12 +10,12 @@
   # check class and empty
   if ("class" %fin% what) {
     if (!inherits(x, "data.frame"))
-      stop("Table should be a data.frame!")
+      message("Possible problem: Table should be a data.frame!")
   }
   
   if ("empty" %fin% what) {
     if (nrow(x) == 0)
-      stop("Seems the peaks table is empty!")
+      message("Possible problem: Seems the peaks table is empty!")
   }
   
   if ("col_class" %fin% what) {
@@ -25,7 +25,7 @@
     dffcol <- setdiff(cls$header, colnames(x))
     if (length(dffcol) > 0) {
       dffcol <- paste(dffcol, collapse = ", ")
-      stop(sprintf("These columns are missed in the %s table: %s", name, dffcol))
+      message(sprintf("Possible problem: These columns are missed in the %s table: %s", name, dffcol))
     }
     
     # check column class
@@ -38,17 +38,17 @@
           sprintf("Error: Column %s should be an %s class, but not %s!", names(abn), cls$class[ii], abn)
         )
       }
-      stop("Check column class!")
+      message("Possible problem: Check column class!")
     }
     
     dffcol_2 <- setdiff(colnames(x), cls$header) 
     
     if (length(dffcol_2) > 0) {
       if (is.null(other_class))
-        stop("Extra columns present but the their class is not defined in other class!")
+        message("Possible problem: Extra columns present but the their class is not defined in other class!")
       v <- unique(sapply(x[, dffcol_2], function(x) inherits(x, other_class)))
       if (any(!v))
-        stop(sprintf("Extra columns are not the class of %s.", other_class))
+        message(sprintf("Possible problem: Extra columns are not the class of %s.", other_class))
     }
   }
   
@@ -178,7 +178,7 @@ atScore numeric
     xx <- x[[i]]
     if (!is.null(xx)) {
       if (any(xx$ID != i))
-        stop("Validating annotationMassID doesn't map!")
+        message("Possible problem: Validating annotationMassID doesn't map!")
       .validate_df_general(
         x=xx, name = paste0("annotationMass$", i), class=cls, verbose = FALSE)
     }
@@ -247,14 +247,14 @@ id2 character"
   it <- intersect(x$meta$ID, x$intensities$ID)
   it <- intersect(x$masterPeaks$ID, it)
   if (length(it) != nrow(x$meta))
-    stop("Validating features - ID columns in feature tables cannot be mapped!")
+    message("Possible problem: Validating features - ID columns in feature tables cannot be mapped!")
   
 }
 
 
 .validate_matchedRefFragments <- function(x) {
   if (any(!names(x$peakList) %fin% x$meta$id2))
-    stop("Validating matchedRefFragments - There are names in the peakList not recorded in the meta id2!")
+    message("Possible problem: Validating matchedRefFragments - There are names in the peakList not recorded in the meta id2!")
 }
 
 
@@ -262,35 +262,35 @@ id2 character"
   
   if (!all(names(x$annotationMass) %fin% x$features$meta$ID) ||
       !all(x$features$meta$ID %fin% names(x$annotationMass)))
-    stop("Different elements: names of annotationMass and features$meta$ID")
+    message("Possible problem: Different elements: names of annotationMass and features$meta$ID")
   
   mstpk <- na.omit(unlist(x$features$masterPeaks[, setdiff(colnames(x$features$masterPeaks), "ID")]))
   if (any(!mstpk %fin% x$peaks$ID))
-    stop("Master peaks is not listed in the peaks table!")
+    message("Possible problem: Master peaks is not listed in the peaks table!")
   
   ###
   if (max(unlist(x$features$meta$peakidx)) != length(x$peaks$ID))
-    stop("features$meta$peakidx doens't match x$peaks$ID!")
+    message("Possible problem: features$meta$peakidx doens't match x$peaks$ID!")
   ###
   
   all_database_id <- unique(unlist(lapply(x$annotationMass, function(x) x$accession)))
   if (any(!x$annotationFragment$database_id %fin% all_database_id))
-    stop("Metabolite ID of MS2 fragments is not in the MS1 annotation (annotaitonMass) table!")
+    message("Possible problem: Metabolite ID of MS2 fragments is not in the MS1 annotation (annotaitonMass) table!")
   
   if (any(!unique(unlist(strsplit(x$peaks$ms2Scan, ";"))) %fin% x$scanMetaTab$ID))
-    stop("peaks$ms2scan contains ID doesn't present in scanMetaTable$ID!")
+    message("Possible problem: peaks$ms2scan contains ID doesn't present in scanMetaTable$ID!")
   
   if (any(!x$scanIntensityTab$ID %fin% x$scanMetaTab$ID))
-    stop("scanIntensityTab$ID contains ID doesn't present in scanMetaTable$ID!")
+    message("Possible problem: scanIntensityTab$ID contains ID doesn't present in scanMetaTable$ID!")
   
   if (any(!x$annotationFragment$query_peaks %fin% x$scanMetaTab$ID))
-    stop("annotationFragment$query_peaks contains ID doesn't present in scanMetaTable$ID!")
+    message("Possible problem: annotationFragment$query_peaks contains ID doesn't present in scanMetaTable$ID!")
   
   if (!all(x$annotationFragment$annot_peaks %fin% x$matchedRefFragments$meta$id2))
-    stop("annotationFragment$annot_peaks contains ID doesn't present in matchedRefFragments$meta$id2!")
+    message("Possible problem: annotationFragment$annot_peaks contains ID doesn't present in matchedRefFragments$meta$id2!")
   
   if (!all(x$annotationFragment$database_id %fin% x$matchedRefFragments$meta$database_id))
-    stop("annotationFragment$database_id contains ID doesn't present in matchedRefFragments$meta$database_id!")
+    message("Possible problem: annotationFragment$database_id contains ID doesn't present in matchedRefFragments$meta$database_id!")
 }
 
 
