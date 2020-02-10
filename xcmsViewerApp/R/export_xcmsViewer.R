@@ -19,11 +19,11 @@ xcmsViewer <- function(dir, ...) {
   
   app <- list(
     ui = navbarPage(
-      "XCMSViewer - Explore Untarget Metaboloimcs Data",
+      "XCMSViewer - Explore Untargeted Metaboloimcs Data",
       theme = shinytheme("yeti"),
       
       tabPanel(
-        "Stats",
+        "Metaboloimc feature",
         fluidRow(
           # left panel - phenotype related
           column( 3, phenoIntensityEIC_UI("pies") ),
