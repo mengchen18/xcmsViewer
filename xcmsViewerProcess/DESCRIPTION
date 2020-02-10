@@ -1,8 +1,8 @@
 Package: xcmsViewerProcess
 Type: Package
 Title: xcmsViewerProcess
-Version: 0.1.4
-Date: 2020-02-08
+Version: 0.1.5
+Date: 2020-02-10
 Author: Chen Meng
 Maintainer: Chen Meng <mengchen18@gmail.com>
 Description: Prepare data for xcmsViewerApp.

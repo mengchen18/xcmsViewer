@@ -3,6 +3,12 @@
 #' @param mode mode. pos or neg
 #' @param massTab a data.frame of mass table having at least one column named as "monoisotopic_molecular_weight"
 #' @param refSpectra reference MS2 spectra used annotate the experimental MS2 spectra
+#' @param ms1.noise passed to \link{asIntensityTable}
+#' @param ms1.maxPeaks passed to \link{asIntensityTable}
+#' @param ms1.maxIdenticalInt passed to \link{asIntensityTable}
+#' @param ms2.noise passed to \link{asIntensityTable}
+#' @param ms2.maxPeaks passed to \link{asIntensityTable}
+#' @param ms2.maxIdenticalInt passed to \link{asIntensityTable}
 #' @param ... other parameters passed to bplapply 
 #' @importFrom fastmatch %fin%
 #' @import MAIT
@@ -10,12 +16,16 @@
 #' @import BiocParallel
 #' @export
 #' 
-summarizeExp <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra = NULL, ...) {
+summarizeExp <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra = NULL, 
+  ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
+  ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, ...) {
   
   mtable <- asMetaTable(x)
 
   cat("Extracting peak intensity table and meta table ...")
-  itable <- asIntensityTable(x, ...)  
+  itable <- asIntensityTable(x,  
+    ms1.noise = ms1.noise, ms1.maxPeaks = ms1.maxPeaks, ms1.maxIdenticalInt = ms1.maxIdenticalInt,
+    ms2.noise = ms2.noise, ms2.maxPeaks = ms2.maxPeaks, ms2.maxIdenticalInt = ms2.maxIdenticalInt, ...)  
   cat(" done! \n")
   
   cat("Extracting extended chrom peaks ...\n")

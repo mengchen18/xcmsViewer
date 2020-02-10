@@ -5,7 +5,9 @@
 \title{Summarize XCMSnExp data}
 \usage{
 summarizeExp(x, mode = c("pos", "neg")[1], massTab = NULL,
-  refSpectra = NULL, ...)
+  refSpectra = NULL, ms1.noise = 100, ms1.maxPeaks = Inf,
+  ms1.maxIdenticalInt = 20, ms2.noise = 30, ms2.maxPeaks = 100,
+  ms2.maxIdenticalInt = 6, ...)
 }
 \arguments{
 \item{x}{an object of XCMSnExp}
@@ -15,6 +17,18 @@ summarizeExp(x, mode = c("pos", "neg")[1], massTab = NULL,
 \item{massTab}{a data.frame of mass table having at least one column named as "monoisotopic_molecular_weight"}
 
 \item{refSpectra}{reference MS2 spectra used annotate the experimental MS2 spectra}
+
+\item{ms1.noise}{passed to \link{asIntensityTable}}
+
+\item{ms1.maxPeaks}{passed to \link{asIntensityTable}}
+
+\item{ms1.maxIdenticalInt}{passed to \link{asIntensityTable}}
+
+\item{ms2.noise}{passed to \link{asIntensityTable}}
+
+\item{ms2.maxPeaks}{passed to \link{asIntensityTable}}
+
+\item{ms2.maxIdenticalInt}{passed to \link{asIntensityTable}}
 
 \item{...}{other parameters passed to bplapply}
 }
