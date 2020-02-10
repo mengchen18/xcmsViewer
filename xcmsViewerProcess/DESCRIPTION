@@ -1,11 +1,11 @@
 Package: xcmsViewerProcess
 Type: Package
-Title: xcmsViewerProcess
-Version: 0.1.5
+Title: Processing and annotating data for xcmsViewerApp
+Version: 0.1.6
 Date: 2020-02-10
 Author: Chen Meng
 Maintainer: Chen Meng <mengchen18@gmail.com>
-Description: Prepare data for xcmsViewerApp.
+Description: Converting MSnExp object to simple table format, including meta table and intensity. Identified features will be annotated if annotation information (monoisotopic mass and MS2 spectra) is given. The output is ready to be visualized using xcmsViewerApp.
 License: GPL (>= 2)
 Depends: R (>= 3.5.0)
 Imports: BiocParallel, MSnbase, dplyr, fastmatch, minpack.lm, reshape2, xcms, MAIT, utils, xcmsViewerApp, Biobase
