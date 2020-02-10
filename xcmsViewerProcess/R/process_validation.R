@@ -156,7 +156,7 @@
 header class
 name character
 chemical_formula character
-average_molecular_weight character
+average_molecular_weight numeric
 monoisotopic_molecular_weight numeric
 cas_registry_number character
 accession character
