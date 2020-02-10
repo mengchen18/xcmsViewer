@@ -63,6 +63,15 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
   })
   maTabProxy <- DT::dataTableProxy('massAnnotTab')
 
+  observe({
+    req(maTab())
+    req(ms2tab())
+    req(i <- input$massAnnotTab_rows_selected)
+    req(id <- maTab()$metaID[i])
+    ii <- fastmatch::fmatch(id, ms2tab()$metaID)
+    if (is.na(ii)) req(NULL)
+    DT::selectRows(ms2TabProxy, ii)
+  })
   
   # 2. MS2 scan table
   ms2tab <- reactive({
@@ -110,6 +119,9 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
     )
     DT::formatStyle(dt, columns = 1:ncol(ms2tab()), fontSize = '85%')
   })
+
+  ms2TabProxy <- DT::dataTableProxy('ms2table')
+
 
   observe({
     req(maTab())
