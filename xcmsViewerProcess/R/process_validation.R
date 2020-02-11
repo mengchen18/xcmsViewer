@@ -10,12 +10,12 @@
   # check class and empty
   if ("class" %fin% what) {
     if (!inherits(x, "data.frame"))
-      message("Possible problem: Table should be a data.frame!")
+      message(sprintf("Possible problem: Table %s should be a data.frame!", name))
   }
   
   if ("empty" %fin% what) {
     if (nrow(x) == 0)
-      message("Possible problem: Seems the peaks table is empty!")
+      message(sprintf("Possible problem: Seems the %s table is empty!"), name)
   }
   
   if ("col_class" %fin% what) {
@@ -260,37 +260,39 @@ id2 character"
 
 .validate_all <- function(x) {
   
-  if (!all(names(x$annotationMass) %fin% x$features$meta$ID) ||
-      !all(x$features$meta$ID %fin% names(x$annotationMass)))
-    message("Possible problem: Different elements: names of annotationMass and features$meta$ID")
-  
   mstpk <- na.omit(unlist(x$features$masterPeaks[, setdiff(colnames(x$features$masterPeaks), "ID")]))
   if (any(!mstpk %fin% x$peaks$ID))
     message("Possible problem: Master peaks is not listed in the peaks table!")
   
-  ###
   if (max(unlist(x$features$meta$peakidx)) != length(x$peaks$ID))
     message("Possible problem: features$meta$peakidx doens't match x$peaks$ID!")
-  ###
-  
-  all_database_id <- unique(unlist(lapply(x$annotationMass, function(x) x$accession)))
-  if (any(!x$annotationFragment$database_id %fin% all_database_id))
-    message("Possible problem: Metabolite ID of MS2 fragments is not in the MS1 annotation (annotaitonMass) table!")
   
   if (any(!unique(unlist(strsplit(x$peaks$ms2Scan, ";"))) %fin% x$scanMetaTab$ID))
     message("Possible problem: peaks$ms2scan contains ID doesn't present in scanMetaTable$ID!")
   
   if (any(!x$scanIntensityTab$ID %fin% x$scanMetaTab$ID))
     message("Possible problem: scanIntensityTab$ID contains ID doesn't present in scanMetaTable$ID!")
-  
-  if (any(!x$annotationFragment$query_peaks %fin% x$scanMetaTab$ID))
-    message("Possible problem: annotationFragment$query_peaks contains ID doesn't present in scanMetaTable$ID!")
-  
-  if (!all(x$annotationFragment$annot_peaks %fin% x$matchedRefFragments$meta$id2))
-    message("Possible problem: annotationFragment$annot_peaks contains ID doesn't present in matchedRefFragments$meta$id2!")
-  
-  if (!all(x$annotationFragment$database_id %fin% x$matchedRefFragments$meta$database_id))
-    message("Possible problem: annotationFragment$database_id contains ID doesn't present in matchedRefFragments$meta$database_id!")
+
+  if (!is.null(x$annotationMass)) {
+    
+    if (!all(names(x$annotationMass) %fin% x$features$meta$ID) || !all(x$features$meta$ID %fin% names(x$annotationMass)))
+      message("Possible problem: Different elements: names of annotationMass and features$meta$ID")
+    
+    if (!is.null(x$annotationFragment)) {
+      all_database_id <- unique(unlist(lapply(x$annotationMass, function(x) x$accession)))
+      if (any(!x$annotationFragment$database_id %fin% all_database_id))
+        message("Possible problem: Metabolite ID of MS2 fragments is not in the MS1 annotation (annotaitonMass) table!")
+
+      if (any(!x$annotationFragment$query_peaks %fin% x$scanMetaTab$ID))
+        message("Possible problem: annotationFragment$query_peaks contains ID doesn't present in scanMetaTable$ID!")
+      
+      if (!all(x$annotationFragment$annot_peaks %fin% x$matchedRefFragments$meta$id2))
+        message("Possible problem: annotationFragment$annot_peaks contains ID doesn't present in matchedRefFragments$meta$id2!")
+      
+      if (!all(x$annotationFragment$database_id %fin% x$matchedRefFragments$meta$database_id))
+        message("Possible problem: annotationFragment$database_id contains ID doesn't present in matchedRefFragments$meta$database_id!")
+    }
+  }
 }
 
 
@@ -307,9 +309,11 @@ id2 character"
   
   .validate_scanIntensityTab(x$scanIntensityTab)
   
-  .validate_annotationMass(x$annotationMass) ####
+  if (!is.null(x$annotationMass))
+  .validate_annotationMass(x$annotationMass)
   
-  .validate_annotationFragment(x$annotationFragment)
+  if (!is.null(x$annotationFragment))
+    .validate_annotationFragment(x$annotationFragment)
   
   .validate_matchedRefFragments_meta(x$matchedRefFragments$meta)
   .validate_matchedRefFragments_peakList(x$matchedRefFragments$peakList)

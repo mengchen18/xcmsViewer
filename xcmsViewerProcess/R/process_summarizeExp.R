@@ -185,6 +185,9 @@ summarizeExp <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra 
     })
     cat("Done!\n")
   }
+
+  if (is.null(features$meta$Annotation))
+    features$meta$Annotation <- ""
   
   res <- list(
     features = features,
