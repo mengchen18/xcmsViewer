@@ -1,7 +1,7 @@
 Package: xcmsViewerData
 Type: Package
 Title: External resources used for xcmsViewer pipeline
-Version: 0.1.6
+Version: 0.1.7
 Date: 2020-02-12
 Author: WChen Meng <mengchen18@gmail.com>
 Maintainer: Chen Meng <mengchen18@gmail.com>
