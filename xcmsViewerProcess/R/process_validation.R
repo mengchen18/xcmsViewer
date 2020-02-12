@@ -41,7 +41,7 @@
       message("Possible problem: Check column class!")
     }
     
-    dffcol_2 <- setdiff(colnames(x), cls$header) 
+    dffcol_2 <- setdiff(colnames(x), cls$header)
     
     if (length(dffcol_2) > 0) {
       if (is.null(other_class))
@@ -302,27 +302,20 @@ id2 character"
   .validate_features_intensities(x$features$intensities)
   .validate_features_masterPeaks(x$features$masterPeaks)
   .validate_features(x$features)
-  
   .validate_peaks(x$peaks)
-  
   .validate_scanMetaTab(x$scanMetaTab)
-  
   .validate_scanIntensityTab(x$scanIntensityTab)
-  
-  if (!is.null(x$annotationMass))
-  .validate_annotationMass(x$annotationMass)
-  
-  if (!is.null(x$annotationFragment))
-    .validate_annotationFragment(x$annotationFragment)
-  
-  .validate_matchedRefFragments_meta(x$matchedRefFragments$meta)
-  .validate_matchedRefFragments_peakList(x$matchedRefFragments$peakList)
-  
-  .validate_matchedRefFragments(x$matchedRefFragments)
-  
   .validate_pheno(x$pheno)
+  if (!is.null(x$annotationMass)) {
+    .validate_annotationMass(x$annotationMass)
+    if (!is.null(x$annotationFragment)) {
+      .validate_annotationFragment(x$annotationFragment)
+      .validate_matchedRefFragments_meta(x$matchedRefFragments$meta)
+      .validate_matchedRefFragments_peakList(x$matchedRefFragments$peakList)
+      .validate_matchedRefFragments(x$matchedRefFragments)
+    }
+  }
   .validate_all(x)
-  
 }
 
 

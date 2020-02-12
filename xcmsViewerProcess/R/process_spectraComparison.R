@@ -109,6 +109,12 @@ spectraCosDist <- function(
   cm <- sapply(qe_peaks, function(x) {
     sapply(an_peaks, function(y) cospec(x, y, alpha = 0.5))
   })
+  if (!is.matrix(cm))
+    cm <- matrix(
+      cm, nrow = length(an_peaks), 
+      dimnames = list(names(an_peaks), names(qe_peaks))
+      )
+
   
   ii <- which(cm > 0.3, arr.ind = TRUE)
   if (length(ii) == 0)
