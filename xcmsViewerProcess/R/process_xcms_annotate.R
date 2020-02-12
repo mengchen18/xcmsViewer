@@ -72,18 +72,18 @@ xcms_annotate <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra
   names(ms2an) <- features$meta$ID
   
   if (all(sapply(ms2an, is.null))) {
-    ail <- NULL 
-    ms2a  <- NULL
-  } else {
-    ms2a <- do.call(rbind, ms2an)
-    colnames(ms2a) <- gsub("-", "_", colnames(ms2a))
-    ap <- unique(ms2a$annot_peaks)
-    ail <- list(
-      meta = refSpectra$meta[refSpectra$meta$id2 %fin% ap, ],
-      peakList = refSpectra$peakList[ap]
-    )
-    colnames(ail$meta) <- gsub("-", "_", colnames(ail$meta))
+    .validate_statsXCMS(res)
+    return(res)
   }
+  
+  ms2a <- do.call(rbind, ms2an)
+  colnames(ms2a) <- gsub("-", "_", colnames(ms2a))
+  ap <- unique(ms2a$annot_peaks)
+  ail <- list(
+    meta = refSpectra$meta[refSpectra$meta$id2 %fin% ap, ],
+    peakList = refSpectra$peakList[ap]
+  )
+  colnames(ail$meta) <- gsub("-", "_", colnames(ail$meta))
   gc()
   cat("done!\n")
   
@@ -91,9 +91,9 @@ xcms_annotate <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra
   vx <- lapply(features$meta$ID, function(id) {
     ## annotation by mass comparison
     s_massAt <- ll[[id]]
-    i <- fmatch(id, features$meta$ID)
     if (is.null(s_massAt))
       return(NULL)
+    i <- fmatch(id, features$meta$ID)
     s_peakids <- features$meta[i, "peakidx"][[1]] # get peak ids
     s_ms2scans <- peaks[features$meta[i, "peakidx"][[1]], "ms2Scan"] # get MS2 scans
     s_ms2scans <- unlist(strsplit(s_ms2scans, split = ";"))
