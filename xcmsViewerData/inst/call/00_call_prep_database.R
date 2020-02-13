@@ -5,6 +5,9 @@ hmdb_ms1_x <- "/media/share_baybioms/Projects/008_Bioinformatics/B012_MAIT_devel
 hmdb_ms2_exp <- "/media/share_baybioms/Projects/008_Bioinformatics/B012_MAIT_devel/Databases/HMDB/MS2peaks/hmdb_experimental_msms_spectra/"
 hmdb_ms2_pred <- "/media/share_baybioms/Projects/008_Bioinformatics/B012_MAIT_devel/Databases/HMDB/MS2peaks/hmdb_predicted_msms_spectra/"
 
+.laf <- list.files(dir_fun, full.names = TRUE)
+for (.i in .laf)
+  source(.i)
 
 # =================================================================================
 #
@@ -42,9 +45,6 @@ library(flatxml)
 library(parallel)
 library(BiocParallel)
 
-.laf <- list.files(dir_fun, full.names = TRUE)
-for (.i in .laf)
-  source(.i)
 
 hmdb_ms2_exp <- prep_annotation_hmdb_msms(xmlFolder = hmdb_ms2_exp)
 saveRDS(hmdb_ms2_exp, file = file.path(dir_rds, "an_ms2", "HMDB_experimental.rds"))
