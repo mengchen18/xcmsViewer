@@ -32,6 +32,6 @@ prep_annotation_hmdb <- function(x) {
   ss <- data.frame(ss, stringsAsFactors = FALSE)
   
   ss$average_molecular_weight <- as.numeric(ss$average_molecular_weight)
-  ss$monoisotopic_molecular_weight <- as.numeric(ss$average_molecular_weight) 
+  ss$monoisotopic_molecular_weight <- as.numeric(ss$monoisotopic_molecular_weight) 
   ss
 }

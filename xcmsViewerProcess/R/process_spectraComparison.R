@@ -99,7 +99,6 @@ spectraCosDist <- function(
   meta_s <- meta[i, ]
   an_peaks <- refSpectra$peakList[meta_s$id2]
   
-  # peakidx <- featureTab[ftid, "peakidx"][[1]]
   scanids <- unlist(strsplit(peakTab[peakidx, "ms2Scan"], ";"))
   if (length(scanids) == 0)
     return(NULL)

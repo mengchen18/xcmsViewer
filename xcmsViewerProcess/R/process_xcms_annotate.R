@@ -55,17 +55,16 @@ xcms_annotate <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra
   gc()
   cat("done!\n")
   res$annotationMass <- ll
-
   res$features$meta$Annotation <- sapply(ll, function(x) {      
     i <- 1:min(5, nrow(x))
     paste(x$name[i], collapse = ";")
   })
-  
+
   if (is.null(refSpectra)) {
     .validate_statsXCMS(res)
     return(res)
   }
-  
+
   cat("Annotating MS2 spectra ... \n")
   ms2an <- bplapply( features$meta$ID, function(x) {
     spectraCosDist(
