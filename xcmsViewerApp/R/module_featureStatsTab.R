@@ -1,7 +1,10 @@
 featureStatsTab_UI <- function(id) {
   ns<- NS(id)
   wellPanel(
-          fluidRow(
+    tabsetPanel(
+      tabPanel(
+        "Filter table",
+        fluidRow(
             column(
               3, textInput(ns("range_RT"), label = "Range RT", placeholder = "e.g. 120-130")
             ),
@@ -17,9 +20,15 @@ featureStatsTab_UI <- function(id) {
                 actionButton(ns("sbutton"), "Filter")
                 )
               )
-          ),
-          DT::dataTableOutput(ns("featureTable"))
+          )
+        ),
+      tabPanel(
+        "Customize table",
+        selectInput(ns("displayCols"), "Select columns to show", choices = NULL, multiple = TRUE)
         )
+      ),
+    DT::dataTableOutput(ns("featureTable"))
+    )
 }
 
 
@@ -43,11 +52,17 @@ featureStatsTab <- function(input, output, session, dat, dataChanged) {
       })
     dat()$features$meta[i1 & i2 & i3, ]
   })
+
+  observe(
+    updateSelectInput(session, "displayCols", choices = colnames(featureTab()), 
+      selected = c("ID", "Annotation", "QC", "mzmed", "rtmed", "rtmin", "rtmax"))
+    )
   
   ## render the table
   output$featureTable <- DT::renderDataTable({
+    req( input$displayCols )
     dt <- DT::datatable(
-      featureTab()[, c("ID", "Annotation", "QC", "mzmed", "rtmed", "rtmin", "rtmax")],
+      featureTab()[, input$displayCols],
       selection = "single",
       rownames = FALSE,
       filter = "top",
@@ -56,8 +71,7 @@ featureStatsTab <- function(input, output, session, dat, dataChanged) {
     dt <- DT::formatRound(dt, columns = 4:7, digits = 4)
     DT::formatStyle(dt, columns = 2, fontSize = '85%')
   })
-
-
+  
   featureRowSelected <- reactiveVal(NULL)
   observeEvent(list(input$sbutton, dataChanged(), featureTab(), dat()), {
     print("feature selected set to NULL!")
