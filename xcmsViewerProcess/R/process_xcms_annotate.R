@@ -133,7 +133,10 @@ xcms_annotate <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra
   
   features$meta$Annotation <- sapply(vx, function(x) {      
     i <- 1:min(5, nrow(x))
-    paste(x$name[i], collapse = ";")
+    i <- paste(x$name[i], collapse = ";")
+    if (nchar(i) > 300)
+      i <- paste0(substr(i, 1, 300), "...")
+    i
   })
   
   res <- list(
