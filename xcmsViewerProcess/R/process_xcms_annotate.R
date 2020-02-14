@@ -35,8 +35,8 @@ xcms_annotate <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra
     at = maitEnv$negAdducts else 
       stop("'mode' should be either pos or neg!")
   at <- data.frame(
-    adduct = as.character(at$name)[at$nmol==1],
-    massdiff = at$massdiff[at$nmol==1],
+    adduct = as.character(at$name),
+    massdiff = at$massdiff,
     stringsAsFactors = FALSE)
   
   ll <- bplapply(1:nrow(features$meta), function(i) {
