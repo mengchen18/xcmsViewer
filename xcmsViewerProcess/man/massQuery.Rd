@@ -17,7 +17,9 @@ monoisotopic_molecular_weight - the monoisotopic molecular weight of metabolites
 
 \item{addTable}{the adduct table, it must contain at least the following columns:
 adduct - the name of the adduct, such as "[M+H]+"
-massdiff - the mass different of an adduct}
+massdiff - the mass different of an adduct
+nmol - the mol of metabolite, for example, [2M-H] will be 2
+ips - Four values are possible (0.25,0.5,0.75,1) depending on the likelihood of the rule}
 
 \item{ID}{an optional ID column added at the end of the matched data.frame}
 }

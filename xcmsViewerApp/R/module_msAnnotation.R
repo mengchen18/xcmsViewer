@@ -70,7 +70,11 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
     req(id <- maTab()$metaID[i])
     ii <- fastmatch::fmatch(id, ms2tab()$metaID)
     if (is.na(ii)) req(NULL)
-    DT::selectRows(ms2TabProxy, ii)
+    isolate({
+      if (!is.null(input$ms2table_rows_selected))
+        if (id != ms2tab()$metaID[input$ms2table_rows_selected])
+          DT::selectRows(ms2TabProxy, ii)
+        })    
   })
   
   # 2. MS2 scan table
@@ -128,7 +132,7 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
     req(ms2tab())
     req(i <- input$ms2table_rows_selected)
     req(id <- ms2tab()$metaID[i])
-    DT::selectRows(maTabProxy, which(id == maTab()$metaID))
+    DT::selectRows(maTabProxy, fastmatch::fmatch(id, maTab()$metaID))
   })
   
   # 3. MS2/mirror plot

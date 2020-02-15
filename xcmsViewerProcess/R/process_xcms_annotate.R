@@ -37,6 +37,8 @@ xcms_annotate <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra
   at <- data.frame(
     adduct = as.character(at$name),
     massdiff = at$massdiff,
+    nmol = as.integer(at$nmol),
+    ips = as.numeric(at$ips),
     stringsAsFactors = FALSE)
   
   ll <- bplapply(1:nrow(features$meta), function(i) {
@@ -122,7 +124,11 @@ xcms_annotate <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra
       class(.dd$cos) <- "numeric"
       class(.dd$database_id) <- "character"
     }
-    s_massAt <- cbind(s_massAt, .dd)
+    # s_massAt <- cbind(s_massAt, .dd)
+    s_massAt$annot_peaks <- .dd$annot_peaks
+    s_massAt$query_peaks <- .dd$query_peaks
+    s_massAt$cos <- .dd$cos
+    s_massAt$database_id <- .dd$database_id
     s_massAt$atScore <- s_massAt$score
     .cv <- !is.na(s_massAt$cos)
     s_massAt$atScore[.cv] <- s_massAt$atScore[.cv] + s_massAt$cos[.cv]
@@ -149,6 +155,6 @@ xcms_annotate <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra
     matchedRefFragments = ail,
     pheno = pheno
   )
-  .validate_statsXCMS(res)
+  try(.validate_statsXCMS(res))
   res
 }

@@ -7,6 +7,8 @@
 #' @param addTable the adduct table, it must contain at least the following columns:
 #'   adduct - the name of the adduct, such as "[M+H]+"
 #'   massdiff - the mass different of an adduct
+#'   nmol - the mol of metabolite, for example, [2M-H] will be 2
+#'   ips - Four values are possible (0.25,0.5,0.75,1) depending on the likelihood of the rule 
 #' @param ID an optional ID column added at the end of the matched data.frame
 #' @export
 
@@ -15,7 +17,8 @@ massQuery <- function(m, tolppm, refTab, addTable, ID=NULL) {
   if (is.null(refTab$monoisotopic_molecular_weight))
     stop("The 'monoisotopic_molecular_weight' column doesn't exist in the refTab!")
   
-  dd <- sapply(m - addTable$massdiff, function(v) {
+  m_mass <- (m - addTable$massdiff)/addTable$nmol
+  dd <- sapply(m_mass, function(v) {
     v - refTab$monoisotopic_molecular_weight
   })
   
@@ -26,8 +29,8 @@ massQuery <- function(m, tolppm, refTab, addTable, ID=NULL) {
   at$massWithAdduct <- at$monoisotopic_molecular_weight + at$massdiff
   at$massQueried <- m
   at$deltaPPM <- abs(at$massQueried - at$massWithAdduct)/at$massQueried * 1e6
-  at$score <- 1-at$deltaPPM/tolppm
-  at <- at[order(at$deltaPPM), ]
+  at$score <- (1-at$deltaPPM/tolppm) * at$ips
+  at <- at[order(at$score, decreasing = TRUE), ]
   at$ID <- ID
   at
 }

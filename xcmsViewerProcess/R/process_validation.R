@@ -44,8 +44,10 @@
     dffcol_2 <- setdiff(colnames(x), cls$header)
     
     if (length(dffcol_2) > 0) {
-      if (is.null(other_class))
+      if (is.null(other_class)) {
         message("Possible problem: Extra columns present but the their class is not defined in other class!")
+        return()
+      }
       v <- unique(sapply(x[, dffcol_2], function(x) inherits(x, other_class)))
       if (any(!v))
         message(sprintf("Possible problem: Extra columns are not the class of %s.", other_class))
@@ -172,6 +174,8 @@ query_peaks character
 cos numeric
 database_id character
 atScore numeric
+nmol integer
+ips integer
 "), sep = " ", stringsAsFactors = FALSE)
   
   for (i in names(x)) {

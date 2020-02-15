@@ -55,7 +55,11 @@ featureStatsTab <- function(input, output, session, dat, dataChanged) {
 
   observe(
     updateSelectInput(session, "displayCols", choices = colnames(featureTab()), 
-      selected = c("ID", "Annotation", "QC", "mzmed", "rtmed", "rtmin", "rtmax"))
+      selected = intersect(
+        c("ID", "Annotation", "QC", "mzmed", "rtmed"), 
+        colnames(featureTab())
+        )
+      )
     )
   
   ## render the table
