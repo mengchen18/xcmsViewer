@@ -49,10 +49,13 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
     })
 
 	output$massAnnotTab <- DT::renderDataTable({
-    
-    dt <- DT::datatable(
+    v <- NULL
+    if (nrow(maTab()) > 0)
+      v <- 1
+
+    dt <- DT::datatable(    
       maTab(),
-      selection = "single",
+      selection = list(mode="single", selected = v),
       rownames = FALSE,
       filter = "top",
       class="table-bordered compact",
@@ -63,19 +66,31 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
   })
   maTabProxy <- DT::dataTableProxy('massAnnotTab')
 
-  observe({
+  observeEvent(maTab(), {
     req(maTab())
     req(ms2tab())
     req(i <- input$massAnnotTab_rows_selected)
     req(id <- maTab()$metaID[i])
     ii <- fastmatch::fmatch(id, ms2tab()$metaID)
     if (is.na(ii)) req(NULL)
-    isolate({
-      if (!is.null(input$ms2table_rows_selected))
+    DT::selectRows(ms2TabProxy, ii)
+    })
+
+  observeEvent(input$massAnnotTab_rows_selected, {
+    req(maTab())
+    req(ms2tab())
+    req(i <- input$massAnnotTab_rows_selected)
+    req(id <- maTab()$metaID[i])
+    ii <- fastmatch::fmatch(id, ms2tab()$metaID)
+    if (is.na(ii)) req(NULL)    
+      if (is.null(input$ms2table_rows_selected)) {
+        DT::selectRows(ms2TabProxy, ii)
+      } else {
         if (id != ms2tab()$metaID[input$ms2table_rows_selected])
           DT::selectRows(ms2TabProxy, ii)
-        })    
-  })
+      }    
+    })
+
   
   # 2. MS2 scan table
   ms2tab <- reactive({
@@ -114,7 +129,7 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
       v <- 1
     dt <- DT::datatable( 
       ms2tab(),
-      selection = list(mode="single", selected = v),
+      selection =  list(mode="single", selected = v),
       rownames = FALSE,
       filter = "top",
       class="table-bordered compact",
@@ -127,7 +142,7 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
   ms2TabProxy <- DT::dataTableProxy('ms2table')
 
 
-  observe({
+  observeEvent(input$ms2table_rows_selected, {
     req(maTab())
     req(ms2tab())
     req(i <- input$ms2table_rows_selected)
