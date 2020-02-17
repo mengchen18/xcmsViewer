@@ -37,7 +37,7 @@ xcms_annotate <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra
   at <- data.frame(
     adduct = as.character(at$name),
     massdiff = at$massdiff,
-    nmol = as.integer(at$nmol),
+    nmol = as.numeric(at$nmol),
     ips = as.numeric(at$ips),
     stringsAsFactors = FALSE)
   

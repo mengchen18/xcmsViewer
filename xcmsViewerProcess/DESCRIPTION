@@ -1,7 +1,7 @@
 Package: xcmsViewerProcess
 Type: Package
 Title: Processing and annotating data for xcmsViewerApp
-Version: 0.1.10
+Version: 0.1.11
 Date: 2020-02-14
 Author: Chen Meng
 Maintainer: Chen Meng <mengchen18@gmail.com>

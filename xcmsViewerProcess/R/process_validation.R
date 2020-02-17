@@ -174,8 +174,8 @@ query_peaks character
 cos numeric
 database_id character
 atScore numeric
-nmol integer
-ips integer
+nmol numeric
+ips numeric
 "), sep = " ", stringsAsFactors = FALSE)
   
   for (i in names(x)) {
