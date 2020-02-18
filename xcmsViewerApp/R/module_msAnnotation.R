@@ -76,7 +76,8 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
     DT::selectRows(ms2TabProxy, ii)
     })
 
-  observeEvent(input$massAnnotTab_rows_selected, {
+  # observeEvent(input$massAnnotTab_rows_selected, {
+  observeEvent(input$massAnnotTab_cell_clicked, {    
     req(maTab())
     req(ms2tab())
     req(i <- input$massAnnotTab_rows_selected)
@@ -142,7 +143,8 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
   ms2TabProxy <- DT::dataTableProxy('ms2table')
 
 
-  observeEvent(input$ms2table_rows_selected, {
+  # observeEvent(input$ms2table_rows_selected, {
+  observeEvent(input$ms2table_cell_clicked, {
     req(maTab())
     req(ms2tab())
     req(i <- input$ms2table_rows_selected)

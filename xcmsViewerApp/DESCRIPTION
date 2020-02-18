@@ -1,8 +1,8 @@
 Package: xcmsViewerApp
 Type: Package
 Title: xsms viewer
-Version: 0.1.8
-Date: 2020-02-14
+Version: 0.1.9
+Date: 2020-02-18
 Author: Chen Meng
 Maintainer: Chen Meng <mengchen18@gmail.com>
 Description: a shiny app visualizing xcms and annotation data. 
