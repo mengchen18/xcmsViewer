@@ -34,3 +34,24 @@ _What xcmsViewer doesn't do?_
 
 _So far, xcmsViewer doesn't perform any analysis, such as peak identification, peak area integration, etc. 
 All these need to be done in R, xcmsViewer only provides a way to visualized the processed data._
+
+# Packages
+* __xcmsViewerApp__ - is for data visualization.
+* __xcmsViewerProcess__ - performs feature annotation and converting the output of xcms to format that can be visualized by _xcmsViewerApp_.
+* __xcmsViewerData__ - is a data package containing the information of known metabolites (mass and MS2 spectra) in public databases, such as HMDB and MS-DIAL (due to the limits of GitHub, the data are not uploaded to this repository). In addition, this package gives the functions to process the data downloaded from HMDB and MS-DIAL to the format accepted by _xcmsViewerProcess_.
+* __xcmsViewerDistribution__ - is not an R package, it is used for delivering the xcmsViewerData as standalone software. (Not uploaded to GitHub due to the size limit)
+
+# Installation and examples
+## xcmsViewerApp
+Installation
+```{r}
+devtools::install_github("mengchen18/xcmsViewer/xcmsViewerApp")
+```
+Using the following command to visualizing an example datasets:
+```{r}
+library("xcmsViewerApp")
+xcmsViewer("")
+```
+This command will open a shiny app. User can select the dataset to load (there is only one as an example) using the selection box on the topright corner.
+
+
