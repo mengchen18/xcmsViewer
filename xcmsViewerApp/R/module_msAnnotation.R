@@ -83,13 +83,12 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
     req(i <- input$massAnnotTab_rows_selected)
     req(id <- maTab()$metaID[i])
     ii <- fastmatch::fmatch(id, ms2tab()$metaID)
-    if (is.na(ii)) req(NULL)    
-      if (is.null(input$ms2table_rows_selected)) {
+    if (is.na(ii)) {
+      ii <- NULL
+    } 
+    if (!is.null(input$ms2table_rows_selected))
+      if (id != ms2tab()$metaID[input$ms2table_rows_selected])
         DT::selectRows(ms2TabProxy, ii)
-      } else {
-        if (id != ms2tab()$metaID[input$ms2table_rows_selected])
-          DT::selectRows(ms2TabProxy, ii)
-      }    
     })
 
   
@@ -148,8 +147,11 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
     req(maTab())
     req(ms2tab())
     req(i <- input$ms2table_rows_selected)
-    req(id <- ms2tab()$metaID[i])
-    DT::selectRows(maTabProxy, fastmatch::fmatch(id, maTab()$metaID))
+    id <- ms2tab()$metaID[i]
+    if (is.na(id))
+      ss <- NULL else
+        ss <- fastmatch::fmatch(id, maTab()$metaID)
+    DT::selectRows(maTabProxy, ss)
   })
   
   # 3. MS2/mirror plot
