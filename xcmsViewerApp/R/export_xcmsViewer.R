@@ -56,16 +56,16 @@ xcmsViewer <- function(dir, ...) {
     # Define server logic required to draw a histogram
     server = function(input, output, session) {
       
-      # dat <- reactive({
-      #   readRDS()
-      #   })
       observe(
         print(sprintf("Data selected: %s", input$selectData))
       )
       
-      dat <- reactive({
+      dat <- reactive({        
         req(input$selectData)
-        readRDS(file.path(dir, ff[input$selectData]))
+        showModal(modalDialog(paste("Loading data:", input$selectData), footer=NULL))
+        d <- readRDS(file.path(dir, ff[input$selectData]))
+        removeModal()
+        d
       })
       
       #   The mid panel - feature table
