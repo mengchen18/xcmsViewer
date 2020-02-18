@@ -49,8 +49,9 @@ devtools::install_github("mengchen18/xcmsViewer/xcmsViewerApp")
 ```
 Using the following command to visualizing an example datasets:
 ```{r}
-library("xcmsViewerApp")
-xcmsViewer("")
+library(xcmsViewerApp)
+f <- system.file(package = "xcmsViewerApp", "extdata")
+xcmsViewer(f)
 ```
 This command will open a shiny app. User can select the dataset to load (there is only one as an example) using the selection box on the topright corner.
 
