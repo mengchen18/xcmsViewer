@@ -29,7 +29,7 @@ extendedChromPeaks <- function(x, mtab, itab, ...) {
         dplyr::between(tmp$precMz, c1[["mzmin"]], c1[["mzmax"]])
     )
     tmp$ID[ic]
-  })
+  }, ...)
   cpeaks$ms2Scan <- sapply(l, paste, collapse = ";")
   
   cat("Evaluating EIC quality ...\n")
