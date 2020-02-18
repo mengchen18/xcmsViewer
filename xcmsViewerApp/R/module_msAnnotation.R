@@ -76,7 +76,6 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
     DT::selectRows(ms2TabProxy, ii)
     })
 
-  # observeEvent(input$massAnnotTab_rows_selected, {
   observeEvent(input$massAnnotTab_cell_clicked, {    
     req(maTab())
     req(ms2tab())
@@ -85,10 +84,15 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
     ii <- fastmatch::fmatch(id, ms2tab()$metaID)
     if (is.na(ii)) {
       ii <- NULL
-    } 
-    if (!is.null(input$ms2table_rows_selected))
-      if (id != ms2tab()$metaID[input$ms2table_rows_selected])
-        DT::selectRows(ms2TabProxy, ii)
+    } else if (!is.null(input$ms2table_rows_selected)) {
+      idms2 <- ms2tab()$metaID[input$ms2table_rows_selected]
+      if (is.na(idms2)) {
+        ii <- NULL
+      } else if (id == idms2) {
+        ii <- input$ms2table_rows_selected
+      }      
+    }
+    DT::selectRows(ms2TabProxy, ii)
     })
 
   

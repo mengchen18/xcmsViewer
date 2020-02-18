@@ -57,12 +57,18 @@ xcmsViewer <- function(dir, ...) {
     server = function(input, output, session) {
       
       observe(
-        print(sprintf("Data selected: %s", input$selectData))
+        print(sprintf("Data selected: \n%s", input$selectData))
       )
       
       dat <- reactive({        
         req(input$selectData)
-        showModal(modalDialog(paste("Loading data:", input$selectData), footer=NULL))
+        showModal(
+          modalDialog(
+            title = "Loading data ...",
+            tags$h3(input$selectData),
+            footer=tags$h6("This may take a few minutes!")
+            )
+          )
         d <- readRDS(file.path(dir, ff[input$selectData]))
         removeModal()
         d
