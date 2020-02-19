@@ -53,20 +53,21 @@ featureStatsTab <- function(input, output, session, dat, dataChanged) {
     dat()$features$meta[i1 & i2 & i3, ]
   })
 
-  observe(
+  observe({
     updateSelectInput(session, "displayCols", choices = colnames(featureTab()), 
       selected = intersect(
         c("ID", "Annotation", "QC", "mzmed", "rtmed"), 
         colnames(featureTab())
         )
       )
-    )
+  })
   
   ## render the table
   output$featureTable <- DT::renderDataTable({
     req( input$displayCols )
+    req( ic <- intersect(colnames(featureTab()), input$displayCols) )
     dt <- DT::datatable(
-      featureTab()[, input$displayCols],
+      featureTab()[, ic],
       selection = "single",
       rownames = FALSE,
       filter = "top",
