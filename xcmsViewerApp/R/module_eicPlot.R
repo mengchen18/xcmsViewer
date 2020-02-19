@@ -18,6 +18,8 @@ plotEIC_module <- function(
 ) {
 
   colorLegend <- reactive({
+    req(react_x())
+    req(react_diffPheno())
     colCode(x = react_x(), diffPheno=react_diffPheno(), select = react_select())
     })
   rtrange <- reactive(
