@@ -51,9 +51,10 @@ peakEIC <- function(input, output, session, dat, featureSelected = reactive(NULL
       rtmed = f$rt,
       rtmin = f$rtmin,
       rtmax = f$rtmax)
-    
     res
   })
+
+
   
   callModule(
     plotEIC_module, "peak_eic",

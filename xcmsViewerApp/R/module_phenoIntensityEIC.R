@@ -90,7 +90,9 @@ phenoIntensityEIC <- function(input, output, session, dat, featureSelected = rea
 
     ## there might be a bug
     fc <- dat()$pheno[[input$phenoCols]]
-    if (length(fc) != length(int)) {
+    if (length(fc) == 0 ) {
+      fc <- rep("N/A", length(int))
+    } else if (length(fc) != length(int)) {
       warning("check module_phenoIntensityEIC phenoCols problem!")
       fc <- rep("N/A", length(int))
     }

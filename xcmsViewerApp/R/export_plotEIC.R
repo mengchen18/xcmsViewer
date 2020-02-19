@@ -22,7 +22,7 @@ colCode <- function(x, diffPheno=NULL, select = NULL) {
   uniquePheno <- unique(diffPheno)
   
   if (is.null(select)) {
-    if (!is.null(diffPheno)) {
+    if (!is.null(diffPheno) && length(diffPheno) > 0) {
       set.seed(13)
       col <- randomcoloR::distinctColorPalette(length(uniquePheno))
       names(col) <- uniquePheno
