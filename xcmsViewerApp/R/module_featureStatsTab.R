@@ -65,7 +65,8 @@ featureStatsTab <- function(input, output, session, dat, dataChanged) {
   ## render the table
   output$featureTable <- DT::renderDataTable({
     req( input$displayCols )
-    req( ic <- intersect(colnames(featureTab()), input$displayCols) )
+    ii <- input$displayCols %in% colnames(featureTab())
+    req( ic <-  input$displayCols[ii] )
     dt <- DT::datatable(
       featureTab()[, ic],
       selection = "single",
