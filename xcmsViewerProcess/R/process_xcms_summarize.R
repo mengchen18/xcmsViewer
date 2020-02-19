@@ -16,6 +16,7 @@ xcms_summarize <- function(
   cat(" done! \n")
   
   cat("Extracting extended chrom peaks ...\n")
+  gc()
   peaks <- extendedChromPeaks(x, mtab=mtable, itab=itable, ...)
   peaks$sample <- as.factor(peaks$sample)
   peaks$ID <- rownames(peaks)
