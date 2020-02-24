@@ -41,6 +41,7 @@ phenoIntensityEIC <- function(input, output, session, dat, featureSelected = rea
       filter = "top",
       rownames = FALSE,
       class="table-bordered compact",
+      caption = "Phenotype/Meta data",
       option = list(scrollX = TRUE, scrollY = "220px", dom = "t", paging = FALSE)
     )
   })
