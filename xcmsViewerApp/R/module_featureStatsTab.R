@@ -1,10 +1,20 @@
 featureStatsTab_UI <- function(id) {
   ns<- NS(id)
-  wellPanel(
-    tabsetPanel(
-      tabPanel(
-        "Filter table",
+
+  tabsetPanel(
+  tabPanel("Table",
+    wellPanel(
         fluidRow(
+          column(
+            1, tags$div(
+                style="margin-top:25px;",
+            shinyWidgets::dropdownButton(
+                                  selectInput(ns("displayCols"), "Select columns to show", choices = NULL, multiple = TRUE),
+                                  circle = FALSE, status = "default", icon = icon("gear"), width = "1000%",
+                                  tooltip = shinyWidgets::tooltipOptions(title = "Customize displayed columns")
+                                )
+                )
+            ),
             column(
               3, textInput(ns("range_RT"), label = "Range RT", placeholder = "e.g. 120-130")
             ),
@@ -12,7 +22,7 @@ featureStatsTab_UI <- function(id) {
               3, textInput(ns("range_MZ"), label = "Range MZ", placeholder = "e.g. 320-321 or 455")
             ),
             column(
-              4, textInput(ns("search_annot"), label = "Search metabolite", placeholder = "e.g. proline or prol")
+              3, textInput(ns("search_annot"), label = "Search metabolite", placeholder = "e.g. proline or prol")
             ),
             column(
               2, tags$div(
@@ -20,15 +30,21 @@ featureStatsTab_UI <- function(id) {
                 actionButton(ns("sbutton"), "Filter")
                 )
               )
-          )
-        ),
-      tabPanel(
-        "Customize table",
-        selectInput(ns("displayCols"), "Select columns to show", choices = NULL, multiple = TRUE)
-        )
+          
       ),
     DT::dataTableOutput(ns("featureTable"))
+    )    
+    ) 
+    ,
+      tabPanel(
+        "Figure",
+        wellPanel(
+          scatterD3_UI(ns("scatter")),
+          scatterD3_plot(ns("scatter"))
+        )
+      )
     )
+
 }
 
 
@@ -86,6 +102,14 @@ featureStatsTab <- function(input, output, session, dat, dataChanged) {
   observe( 
     featureRowSelected( input$featureTable_rows_selected )
     )
+
+  ### scatter
+  plot2d <- callModule(
+    scatterD3_Module, id = "scatter", data = featureTab, clickRetVar = reactive("ID")
+    )
+  observe({
+    featureRowSelected( plot2d() )
+    })
   
   ## after select a row from the table, returns
   reactive({
