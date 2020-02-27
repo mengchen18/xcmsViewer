@@ -268,8 +268,8 @@ id2 character"
   if (any(!mstpk %fin% x$peaks$ID))
     message("Possible problem: Master peaks is not listed in the peaks table!")
   
-  if (max(unlist(x$features$meta$peakidx)) != length(x$peaks$ID))
-    message("Possible problem: features$meta$peakidx doens't match x$peaks$ID!")
+  if (max(unlist(x$features$meta$peakidx)) > length(x$peaks$ID))
+    message("Possible problem: features$meta$peakidx has more peaks IDs than x$peaks$ID!")
   
   if (any(!unique(unlist(strsplit(x$peaks$ms2Scan, ";"))) %fin% x$scanMetaTab$ID))
     message("Possible problem: peaks$ms2scan contains ID doesn't present in scanMetaTable$ID!")
