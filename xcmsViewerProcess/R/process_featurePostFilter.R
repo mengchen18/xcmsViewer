@@ -1,3 +1,9 @@
+#' post filter of features
+#' @param x An XCMSnExp object afater peak calling
+#' @param nComplete the number of complete samples in a 
+#'  group (is length = 1) /all groups (if length = group numbers). If can be given
+#'  integers (>= 1) or the percent of groups size (0, 1).#' 
+#' @export
 
 featurePostfilter <- function(x, nComplete = 1) {
   fd <- featureDefinitions(x)
