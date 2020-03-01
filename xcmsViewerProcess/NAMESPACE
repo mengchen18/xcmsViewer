@@ -2,6 +2,7 @@
 
 export(asIntensityTable)
 export(asMetaTable)
+export(chromPeaksPostFilter)
 export(cosnorm)
 export(cospec)
 export(extendedChromPeaks)

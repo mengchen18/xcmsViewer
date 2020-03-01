@@ -4,7 +4,7 @@
 \alias{extendedChromPeaks}
 \title{extending chrom peaks table with the MS2, chromatogram (with QC)}
 \usage{
-extendedChromPeaks(x, mtab, itab, ...)
+extendedChromPeaks(x, mtab, itab, QC = TRUE, ...)
 }
 \arguments{
 \item{x}{an MSnExp object}
@@ -12,6 +12,8 @@ extendedChromPeaks(x, mtab, itab, ...)
 \item{mtab}{meta table, often returned by \link{asMetaTable}}
 
 \item{itab}{intensity table, often returned by \link{asIntensityTable}}
+
+\item{QC}{whether the QC of EIC should be calculated}
 
 \item{...}{other parameters passed to bplapply}
 }

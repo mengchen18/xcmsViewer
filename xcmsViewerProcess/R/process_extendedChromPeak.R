@@ -2,6 +2,7 @@
 #' @param x an MSnExp object
 #' @param mtab meta table, often returned by \link{asMetaTable}
 #' @param itab intensity table, often returned by \link{asIntensityTable}
+#' @param QC whether the QC of EIC should be calculated
 #' @param ... other parameters passed to bplapply
 #' @export
 #' @importFrom BiocParallel bplapply
@@ -9,7 +10,7 @@
 #' @importFrom xcms chromPeaks
 
 
-extendedChromPeaks <- function(x, mtab, itab, ...) {
+extendedChromPeaks <- function(x, mtab, itab, QC = TRUE, ...) {
   
   if (!inherits(x, "MSnExp"))
     stop("x should be an object of class MSnExp!")
@@ -32,6 +33,8 @@ extendedChromPeaks <- function(x, mtab, itab, ...) {
   }, ...)
   cpeaks$ms2Scan <- sapply(l, paste, collapse = ";")
   
+  qccols = c("rsq", "rtgap", "intgap", "rtintgap", "truncated", "b")
+  if (QC) {
   cat("Evaluating EIC quality ...\n")
   leic <- bplapply(1:nrow(cpeaks), function(i) {
     c1 <- cpeaks[i, ]
@@ -41,13 +44,26 @@ extendedChromPeaks <- function(x, mtab, itab, ...) {
               mz = c(c1$mzmin - masstol, c1$mzmax + masstol))
     if (is.null(pk))
       return(
-        structure(rep(NA, 6), names = c("rsq", "rtgap", "intgap", "rtintgap", "truncated", "b"))
+        structure(rep(NA, 6), names = qccols)
       )
     .evalPeak(pk)$stats
   }, ...)
   ltab <- do.call(rbind, leic)
+  vQC <- rep(NA, nrow(cpeaks))
+  vQC[which(cpeaks$rsq > 0.8 & abs(cpeaks$truncated) < 1)] <- "+"
+  
+  } else {
+    ltab <- data.frame(
+    matrix(
+      NA, nrow(cpeaks), length(qccols), dimnames = list(rownames(cpeaks), qccols)
+      )
+    )
+  for (i in 1:length(ltab))
+    ltab[[i]] <- as.numeric(ltab[[i]])
+  vQC <- rep("+", nrow(cpeaks))  
+  }
+
   cpeaks <- cbind(cpeaks, ltab)
-  cpeaks$QC <- NA
-  cpeaks$QC[cpeaks$rsq > 0.8 & abs(cpeaks$truncated) < 1] <- "+"
+  cpeaks$QC <- vQC
   cpeaks
 }

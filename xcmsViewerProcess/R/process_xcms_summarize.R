@@ -4,7 +4,8 @@
 xcms_summarize <- function(
   x, 
   ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
-  ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, ...) {
+  ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, 
+  QC = TRUE, ...) {
   
   mtable <- asMetaTable(x)
   
@@ -17,7 +18,7 @@ xcms_summarize <- function(
   
   cat("Extracting extended chrom peaks ...\n")
   gc()
-  peaks <- extendedChromPeaks(x, mtab=mtable, itab=itable, ...)
+  peaks <- extendedChromPeaks(x, mtab=mtable, itab=itable, QC = QC, ...)
   peaks$sample <- as.factor(peaks$sample)
   peaks$ID <- rownames(peaks)
   cat(" done! \n")
@@ -64,9 +65,11 @@ xcms_summarize <- function(
   vv <- unlist(v)
   peaks$masterPeak <- ""
   peaks$masterPeak[peaks$ID %fin% vv] <- "+"
-  peaks <- peaks[, c("ID",  "QC", "sample", "masterPeak", "into", 
-                     "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "intb", "maxo", "sn", 
-                     "ms2Scan", "rsq", "rtgap", "intgap", "rtintgap", "truncated", "b"), ]
+  cc <- c("ID",  "QC", "sample", "masterPeak", "into", 
+                     "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", "intb", "intf", "maxo", "sn", 
+                     "ms2Scan", "rsq", "rtgap", "intgap", "rtintgap", "truncated", "b")
+  cc <- cc[cc %in% colnames(peaks)]
+  peaks <- peaks[, cc]
   cat(" done! \n")
   
   res <- list(

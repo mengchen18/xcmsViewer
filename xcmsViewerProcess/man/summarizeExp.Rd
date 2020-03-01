@@ -10,14 +10,14 @@
 summarizeExp(x, mode = c("pos", "neg")[1], massTab = NULL,
   refSpectra = NULL, ms1.noise = 100, ms1.maxPeaks = Inf,
   ms1.maxIdenticalInt = 20, ms2.noise = 30, ms2.maxPeaks = 100,
-  ms2.maxIdenticalInt = 6, ...)
+  ms2.maxIdenticalInt = 6, QC = TRUE, ...)
 
 xcms_annotate(x, mode = c("pos", "neg")[1], massTab = NULL,
   refSpectra = NULL, ...)
 
 xcms_summarize(x, ms1.noise = 100, ms1.maxPeaks = Inf,
   ms1.maxIdenticalInt = 20, ms2.noise = 30, ms2.maxPeaks = 100,
-  ms2.maxIdenticalInt = 6, ...)
+  ms2.maxIdenticalInt = 6, QC = TRUE, ...)
 }
 \arguments{
 \item{x}{an object of XCMSnExp}
@@ -39,6 +39,8 @@ xcms_summarize(x, ms1.noise = 100, ms1.maxPeaks = Inf,
 \item{ms2.maxPeaks}{passed to \link{asIntensityTable}}
 
 \item{ms2.maxIdenticalInt}{passed to \link{asIntensityTable}}
+
+\item{QC}{whether the QC of EIC should be calculated, passed to \link{extendedChromPeaks}}
 
 \item{...}{other parameters passed to bplapply}
 }
