@@ -10,6 +10,8 @@
 #' @param ms2.maxPeaks passed to \link{asIntensityTable}
 #' @param ms2.maxIdenticalInt passed to \link{asIntensityTable}
 #' @param QC whether the QC of EIC should be calculated, passed to \link{extendedChromPeaks}
+#' @param itable intensitye table
+#' @param mtable meta table
 #' @param ... other parameters passed to bplapply 
 #' @importFrom fastmatch %fin%
 #' @import MAIT
@@ -19,12 +21,13 @@
 #' 
 summarizeExp <- function(x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra = NULL, 
   ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
-  ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, QC = TRUE, ...) {
+  ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, 
+  QC = TRUE, itable = NULL, mtable = NULL, ...) {
 
   xl <- xcms_summarize(x = x, 
     ms1.noise = ms1.noise, ms1.maxPeaks = ms1.maxPeaks, ms1.maxIdenticalInt = ms1.maxIdenticalInt,
     ms2.noise = ms2.noise, ms2.maxPeaks = ms2.maxPeaks, ms2.maxIdenticalInt = ms2.maxIdenticalInt, 
-    QC = QC, ...)
+    QC = QC, itable = itable, mtable = mtable, ...)
   
   xcms_annotate(xl, mode = mode, massTab=massTab, refSpectra = refSpectra, ...)
 }

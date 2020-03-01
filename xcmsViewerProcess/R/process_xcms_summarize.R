@@ -5,16 +5,20 @@ xcms_summarize <- function(
   x, 
   ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
   ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, 
-  QC = TRUE, ...) {
+  QC = TRUE, itable = NULL, mtable = NULL, ...) {
+
+  if (is.null(mtable))
+    mtable <- asMetaTable(x)
   
-  mtable <- asMetaTable(x)
-  
-  cat("Extracting peak intensity table and meta table ...")
+  if (is.null(itable)) {
+  cat("Extracting peak intensity table table ...")
   itable <- asIntensityTable(
     x,  
     ms1.noise = ms1.noise, ms1.maxPeaks = ms1.maxPeaks, ms1.maxIdenticalInt = ms1.maxIdenticalInt,
     ms2.noise = ms2.noise, ms2.maxPeaks = ms2.maxPeaks, ms2.maxIdenticalInt = ms2.maxIdenticalInt, ...)  
   cat(" done! \n")
+  } else 
+    message("itable is given, ms1 and ms2 paramter for itable are not used!")
   
   cat("Extracting extended chrom peaks ...\n")
   gc()

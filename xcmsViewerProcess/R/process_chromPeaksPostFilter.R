@@ -1,31 +1,39 @@
 #' post filter of chromPeaks
 #' @param x An XCMSnExp object afater peak calling
 #' @param postfilter = c(5, 500), 
-# ' @param ms1.noise
-# ' @param ms1.maxPeaks
-# ' @param x, ms1.noise = 100, 
-# ' @param ms1.maxPeaks = Inf, 
-# ' @param ms1.maxIdenticalInt = 20,
-# ' @param ms2.noise = 30, 
-# ' @param ms2.maxPeaks = 100, 
-# ' @param ms2.maxIdenticalInt = 6,
+#' @param ms1.noise passed to \link{summarizeExp}
+#' @param ms1.maxPeaks passed to \link{summarizeExp}
+#' @param ms1.maxIdenticalInt passed to \link{summarizeExp}
+#' @param ms2.noise passed to \link{summarizeExp}
+#' @param ms2.maxPeaks passed to \link{summarizeExp}
+#' @param ms2.maxIdenticalInt passed to \link{summarizeExp}
 #' @param ... arguments passed bplapply
 #' @export
 #' 
-chromPeaksPostFilter <- function(x, postfilter = c(5, 500), ...) {
+chromPeaksPostFilter <- function(
+  x, postfilter = c(5, 500), 
+  ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
+  ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, 
+  ...) {
+
   cat("finding chrompeaks ...\n")
   
   peaks <- chromPeaks(x)
   
   cat("Extracting intensity and meta tables ...\n")
   mtable <- asMetaTable(x)
-  itable <- asIntensityTable(
-    x, ms1.noise = postfilter[2], ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 100, ms2.noise = Inf, ...
-  )
-  fi <- fastmatch::fmatch(itable$ID, mtable$ID)
-  itable$fromFile <- mtable$fromFile[fi]
-  itable$rt <- mtable$rt[fi]
-  itable$ID <- NULL
+  itable_orig <- asIntensityTable(
+    x,  
+    ms1.noise = ms1.noise, ms1.maxPeaks = ms1.maxPeaks, ms1.maxIdenticalInt = ms1.maxIdenticalInt,
+    ms2.noise = ms2.noise, ms2.maxPeaks = ms2.maxPeaks, ms2.maxIdenticalInt = ms2.maxIdenticalInt, 
+    ...)  
+
+  fi <- fastmatch::fmatch(itable_orig$ID, mtable$ID)
+  iir <- mtable$msLevel[fi] == 1 & itable_orig$intensity >= postfilter[2]
+  itable <- itable_orig[iir, ]
+  itable$fromFile <- mtable$fromFile[fi][iir]
+  itable$rt <- mtable$rt[fi][iir]
+  itable$ID <- NULL  
   
   cat("Post filtering ...\n")
   rs <- bplapply(1:nrow(peaks), function(i) {
@@ -41,5 +49,5 @@ chromPeaksPostFilter <- function(x, postfilter = c(5, 500), ...) {
   vm <- x@msFeatureData@.xData$chromPeaks[rs, ]
   rownames(vm) <- xcms:::.featureIDs(nrow(vm), prefix = "CP")
   chromPeaks(x) <- vm
-  x
+  list(mtable = mtable, itable = itable_orig, XCMSnExp = x)
 }
