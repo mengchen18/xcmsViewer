@@ -26,3 +26,10 @@ ips - Four values are possible (0.25,0.5,0.75,1) depending on the likelihood of 
 \description{
 Query possible metabolites according to given m/z
 }
+\examples{
+# library(MAIT)
+# library(xcmsViewerData)
+# data(MAITtables)
+# m1 <- get_annotation_mass("HMDB")
+# q <- massQuery(168.07864 * 2 + 1.007276, tolppm=10, refTab=m1, addTable=posAdducts, ID=NULL)
+}

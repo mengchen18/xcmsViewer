@@ -45,7 +45,7 @@
     
     if (length(dffcol_2) > 0) {
       if (is.null(other_class)) {
-        message("Possible problem: Extra columns present but the their class is not defined in other class!")
+        # message("Possible problem: Extra columns present but the their class is not defined in other class!")
         return()
       }
       v <- unique(sapply(x[, dffcol_2], function(x) inherits(x, other_class)))
@@ -64,13 +64,13 @@
     header =  c(
       "ID", "QC", "sample", "masterPeak", "into", 
       "mz", "mzmin", "mzmax", "rt", "rtmin", "rtmax", 
-      "intb", "maxo", "sn", "ms2Scan", "rsq", 
+       "sn", "ms2Scan", "rsq", 
       "rtgap", "intgap", "rtintgap", "truncated", "b"),
     class = c(
       "character", "character", "factor", "character", 
       "numeric", "numeric", "numeric", "numeric", 
       "numeric", "numeric", "numeric", "numeric", 
-      "numeric", "numeric", "character", "numeric", 
+      "character", "numeric", 
       "numeric", "numeric", "numeric", "numeric", 
       "numeric"),
     stringsAsFactors = FALSE
