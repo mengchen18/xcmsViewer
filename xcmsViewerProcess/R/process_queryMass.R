@@ -10,6 +10,12 @@
 #'   nmol - the mol of metabolite, for example, [2M-H] will be 2
 #'   ips - Four values are possible (0.25,0.5,0.75,1) depending on the likelihood of the rule 
 #' @param ID an optional ID column added at the end of the matched data.frame
+#' @examples
+#' # library(MAIT)
+#' # library(xcmsViewerData)
+#' # data(MAITtables)
+#' # m1 <- get_annotation_mass("HMDB")
+#' # q <- massQuery(168.07864 * 2 + 1.007276, tolppm=10, refTab=m1, addTable=posAdducts, ID=NULL)
 #' @export
 
 massQuery <- function(m, tolppm, refTab, addTable, ID=NULL) {
@@ -28,7 +34,7 @@ massQuery <- function(m, tolppm, refTab, addTable, ID=NULL) {
   at <- cbind(refTab[i[, 1], ], addTable[i[, 2], ])
   at$massWithAdduct <- at$monoisotopic_molecular_weight + at$massdiff
   at$massQueried <- m
-  at$deltaPPM <- abs(at$massQueried - at$massWithAdduct)/at$massQueried * 1e6
+  at$deltaPPM <- abs(apply(i, 1, function(x) dd[x[1], x[2]])/m*1e6)
   at$score <- (1-at$deltaPPM/tolppm) * at$ips
   at <- at[order(at$score, decreasing = TRUE), ]
   at$ID <- ID
