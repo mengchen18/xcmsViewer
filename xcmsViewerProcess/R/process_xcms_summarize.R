@@ -18,7 +18,7 @@ xcms_summarize <- function(
     ms2.noise = ms2.noise, ms2.maxPeaks = ms2.maxPeaks, ms2.maxIdenticalInt = ms2.maxIdenticalInt, ...)  
   cat(" done! \n")
   } else 
-    message("itable is given, ms1 and ms2 paramter for itable are not used!")
+    message("itable is given, ms1 and ms2 parameters for itable are not used!")
   
   cat("Extracting extended chrom peaks ...\n")
   gc()
