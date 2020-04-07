@@ -17,7 +17,7 @@ chromPeaksPostFilter <- function(
   ...) {
 
   cat("finding chrompeaks ...\n")
-  
+  phold <- x@.processHistory 
   peaks <- chromPeaks(x)
   
   cat("Extracting intensity and meta tables ...\n")
@@ -49,5 +49,7 @@ chromPeaksPostFilter <- function(
   vm <- x@msFeatureData@.xData$chromPeaks[rs, ]
   rownames(vm) <- xcms:::.featureIDs(nrow(vm), prefix = "CP")
   chromPeaks(x) <- vm
+  x@.processHistory <- phold
   list(mtable = mtable, itable = itable_orig, XCMSnExp = x)
 }
+
