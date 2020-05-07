@@ -11,7 +11,7 @@
 #' @param massTab a data.frame of mass table having at least one column named as "monoisotopic_molecular_weight"
 #' @param refSpectra reference MS2 spectra used annotate the experimental MS2 spectra
 #' @param tmpdir the temporary directory to store the processed results
-#' @param fun_parallel the parallel function, could be \code{mclapply} or \code{bplapply}
+#' @param parallelFun the parallel function, could be \code{mclapply} or \code{bplapply}
 #' @param ... the parameters passed to parallel function
 #' @export
 #' 
@@ -53,8 +53,7 @@ indiv_summarizeExp <- function(
     files = files,
     param = peakPickingParam,
     postfilterParam = postfilterParam,
-    tmpdir = tmpdir,
-    BPPARAM = BPPARAM
+    tmpdir = tmpdir
   )
   
   print(Sys.time())
@@ -71,7 +70,7 @@ indiv_summarizeExp <- function(
   xdata <- indiv_xcmsSummarize(
     xd, mtab_files = ff$mtab, itab_files = ff$itab, fun_parallel = parallelFun, ...
   )
-  data$pheno <- x
+  xdata$pheno <- x
   saveRDS(xdata, file = file.path(tmpdir, "05_xcmsSummarize.RDS"))
   
   print(Sys.time())
@@ -80,6 +79,7 @@ indiv_summarizeExp <- function(
     x = xdata, massTab = massTab, refSpectra = refSpectra, mode = mode, 
     fun_parallel = parallelFun, ...
   )
+  saveRDS(st, file = file.path(tmpdir, "xcmsViewerData.RDS"))
   
 }
 
@@ -168,6 +168,7 @@ indiv_peakPicking <- function(
 #' @param pgParam the peak grouping parameter, passed to \code{groupChromPeaks}
 #' @param rtParam the retention time adjustment parameters, passed to \code{adjustRtime}
 #' @export
+#' @importFrom stringr str_split_fixed
 #' @return It returns an object of class \code{XCMSnExp}
 #' 
 indiv_defineFeatures <- function(files, mtab_files, rtParam, pgParam) {
@@ -203,6 +204,7 @@ indiv_defineFeatures <- function(files, mtab_files, rtParam, pgParam) {
 #' @param ... the parameters passed to parallel function
 #' @import parallel
 #' @import BiocParallel
+#' @noRd
 #' 
 .indiv_chromPeaksMS2 <- function(x, mtab_files, itab_files, fun_parallel = parallel::mclapply, ...) {
   
@@ -244,7 +246,7 @@ indiv_defineFeatures <- function(files, mtab_files, rtParam, pgParam) {
 indiv_xcmsSummarize <- function( x, mtab_files, itab_files, fun_parallel = mclapply, ... ) {
   
   cat("Extracting extended chrom peaks ...\n")
-  peaks <- .indiv_ChromPeaksMS2(
+  peaks <- .indiv_chromPeaksMS2(
     x, mtab_files = mtab_files, itab_files = itab_files, fun_parallel = fun_parallel, ...
   )
   
@@ -479,6 +481,16 @@ indiv_xcmsAnnotate <- function(
 }
 
 #' Internal function for ms2mapping
+#' @param itab_files file paths of intensity table
+#' @param featureMeta feature meta data
+#' @param mode pos or neg
+#' @param valideRefs valideRefs
+#' @param refs refs
+#' @param peaks the peaks
+#' @param fun_parallel the parallel function
+#' @param ... other parameters passed to parallel
+#' @noRd
+#' 
 .indiv_ms2map <- function(
   itab_files, featureMeta, valideRefs, mode, refs, peaks, fun_parallel, ...
 ) {

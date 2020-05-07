@@ -34,11 +34,11 @@ contains the full path of mzXML or mzML file}
 
 \item{refSpectra}{reference MS2 spectra used annotate the experimental MS2 spectra}
 
+\item{parallelFun}{the parallel function, could be \code{mclapply} or \code{bplapply}}
+
 \item{tmpdir}{the temporary directory to store the processed results}
 
 \item{...}{the parameters passed to parallel function}
-
-\item{fun_parallel}{the parallel function, could be \code{mclapply} or \code{bplapply}}
 }
 \description{
 the individual pipeline process each file separately so less memory
