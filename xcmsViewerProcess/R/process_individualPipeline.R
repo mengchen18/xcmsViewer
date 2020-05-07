@@ -1,18 +1,113 @@
+#' Individual pipeline for summarizeExp
+#' @description the individual pipeline process each file separately so less memory
+#'   used, but slower.
+#' @param x a data.frame where the first columns should be named as "file". It 
+#'   contains the full path of mzXML or mzML file
+#' @param mode mode. pos or neg
+#' @param peakPickingParam peak picking parameters, passed to \code{findChromPeaks}
+#' @param postfilterParam passed to \code{chromPeaksPostFilter}
+#' @param PeakGroupsParam the peak grouping parameter, passed to \code{groupChromPeaks}
+#' @param retentionTimeParam the retention time adjustment parameters, passed to \code{adjustRtime}
+#' @param massTab a data.frame of mass table having at least one column named as "monoisotopic_molecular_weight"
+#' @param refSpectra reference MS2 spectra used annotate the experimental MS2 spectra
+#' @param tmpdir the temporary directory to store the processed results
+#' @param fun_parallel the parallel function, could be \code{mclapply} or \code{bplapply}
+#' @param ... the parameters passed to parallel function
+#' @export
+#' 
+indiv_summarizeExp <- function(
+  x,
+  mode = c("pos", "neg")[1],
+  peakPickingParam = MatchedFilterParam(fwhm = 7.5),
+  postfilterParam = list(
+    postfilter = c(5, 1000), 
+    ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
+    ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, 
+    BPPARAM=bpparam()),
+  PeakGroupsParam = PeakGroupsParam(
+    minFraction = 0.5,
+    extraPeaks = 1,
+    smooth = "loess",
+    span = 0.5,
+    family = "gaussian",
+    peakGroupsMatrix = matrix(nrow = 0, ncol = 0),
+    subset = integer(),
+    subsetAdjust = c("average", "previous")),
+  retentionTimeParam = NearestPeaksParam(),
+  massTab = NULL,
+  refSpectra = NULL, 
+  parallelFun = bplapply, 
+  tmpdir = NA,
+  ...
+) {
+  
+  if (is.na(tmpdir)) 
+    tmpdir <- "xcmsViewerTemp"
+  
+  files <- x$file
+  x$file <- basename(x$file)
+  
+  print(Sys.time())
+  cat("Peak picking ...\n")
+  ff <- indiv_peakPicking(
+    files = files,
+    param = peakPickingParam,
+    postfilterParam = postfilterParam,
+    tmpdir = tmpdir,
+    BPPARAM = BPPARAM
+  )
+  
+  print(Sys.time())
+  cat("Feature defining ...\n")
+  xd <- indiv_defineFeatures(
+    files = ff$XCMSnExp,
+    mtab_files = ff$mtab,
+    rtParam = retentionTimeParam,
+    pgParam = PeakGroupsParam )
+  saveRDS(xd, file = file.path(tmpdir, "04_defineFeatures.RDS"))
+  
+  print(Sys.time())
+  cat("Creating xcmsSummarize object ...\n")
+  xdata <- indiv_xcmsSummarize(
+    xd, mtab_files = ff$mtab, itab_files = ff$itab, fun_parallel = parallelFun, ...
+  )
+  data$pheno <- x
+  saveRDS(xdata, file = file.path(tmpdir, "05_xcmsSummarize.RDS"))
+  
+  print(Sys.time())
+  cat("Annotation ...\n")
+  st <- indiv_xcmsAnnotate(
+    x = xdata, massTab = massTab, refSpectra = refSpectra, mode = mode, 
+    fun_parallel = parallelFun, ...
+  )
+  
+}
+
+
+
+
+
 #' peak picking for individual pipeline 
 #' @description peaks picking are peroformed one raw file after another so that less memory
 #'   used. 
 #' @param files a character vector stores the the mzXML or mzML files
 #' @param param peak picking parameters, passed to \code{findChromPeaks}
 #' @param tmpdir the temporary directory to store the processed results
-#' @param postfilter postfilter applied to the peaks. It defined as c(n, i) interpreted
-#'   as at least n peaks should higher than the intensity x. Any peaks do not pass 
-#'   the criteria will be droped. 
-#' @param BPPARAM passed to \code{bplapply}
-#' @param ... passed to \code[xcms]{findChromPeaks}
+#' @param postfilterParam passed to \code{chromPeaksPostFilter}
+#' @return it returns a list of three elements:
+#'  1. itab = file paths of intensity tables
+#'  2. mtab = file  paths of the meta tables
+#'  3. XCMSnExp = file paths of XCMSnExp
+#'  The elements in the returned list could be passed to \code{indiv_defineFeatures}
 #' @export
 #' 
 indiv_peakPicking <- function(
-  files, param, tmpdir="xcmsViewerTemp", postfilter = c(5, 1000), BPPARAM = bpparam(), ...
+  files, param, tmpdir="xcmsViewerTemp",  
+  postfilterParam = list(
+    postfilter = c(5, 1000), 
+    ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
+    ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, 
+    BPPARAM=bpparam())
 ) {
   
   # creating temp dirs 
@@ -46,10 +141,9 @@ indiv_peakPicking <- function(
     f1b <- gsub("\\..*$", ".Rds", basename(f1))
     
     d1 <- MSnbase::readMSData(f1, mode = "onDisk")
-    xdata <- xcms::findChromPeaks( d1, param = param, msLevel = 1L, ...)
-    xdata <- chromPeaksPostFilter( 
-      x = xdata, postfilter = postfilter, BPPARAM = BPPARAM
-    )
+    xdata <- xcms::findChromPeaks( d1, param = param, msLevel = 1L)
+    postfilterParam$x <- xdata
+    xdata <- do.call(chromPeaksPostFilter, args = postfilterParam)
     
     itab <- xdata$itable
     itab$ID <- sub("^F1.", fid, itab$ID)
@@ -68,13 +162,20 @@ indiv_peakPicking <- function(
   list(itab = file_itab, mtab = file_mtab, XCMSnExp = file_XCMSnExp)
 }
 
-
-indiv_defineFeatures <- function(files, rtParam, pgParam, mtab_files) {
+#' define features for individual pipeline 
+#' @param files the file paths of XCMSnExp
+#' @param mtab_files the file path of meta tables, often returned by function \code{indiv_peakPicking}
+#' @param pgParam the peak grouping parameter, passed to \code{groupChromPeaks}
+#' @param rtParam the retention time adjustment parameters, passed to \code{adjustRtime}
+#' @export
+#' @return It returns an object of class \code{XCMSnExp}
+#' 
+indiv_defineFeatures <- function(files, mtab_files, rtParam, pgParam) {
   exps <- lapply(files, readRDS)
   xdata <- do.call(c, exps)
-  xdata <- groupChromPeaks(xdata, param = rtParam)
-  xdata <- adjustRtime(xdata, param = pgParam)
-  object <- groupChromPeaks(xdata, param = rtParam)
+  xdata <- groupChromPeaks(xdata, param = pgParam)
+  xdata <- adjustRtime(xdata, param = rtParam)
+  object <- groupChromPeaks(xdata, param = pgParam)
   
   if (hasAdjustedRtime( object )) {
     rt <- rtime(object)
@@ -94,7 +195,16 @@ indiv_defineFeatures <- function(files, rtParam, pgParam, mtab_files) {
 }
 
 
-indiv_chromPeaksMS2 <- function(x, mtab_files, itab_files, fun_parallel = mclapply, ...) {
+#' mapping ms2 chromPeaksMS2
+#' @param x the MSnExp oject
+#' @param mtab_files paths of meta table, often returned by function \code{indiv_peakPicking }
+#' @param itab_files paths of the intensity table, often returned by function \code{indiv_peakPicking }
+#' @param fun_parallel the parallel function, could be \code{mclapply} or \code{bplapply}
+#' @param ... the parameters passed to parallel function
+#' @import parallel
+#' @import BiocParallel
+#' 
+.indiv_chromPeaksMS2 <- function(x, mtab_files, itab_files, fun_parallel = parallel::mclapply, ...) {
   
   if (!inherits(x, "MSnExp"))
     stop("x should be an object of class MSnExp!")
@@ -123,12 +233,18 @@ indiv_chromPeaksMS2 <- function(x, mtab_files, itab_files, fun_parallel = mclapp
   cpeaks
 }
 
-
-
+#' xcms summarize function for the individual pipeline
+#' @param x the MSnExp oject
+#' @param mtab_files paths of meta table, often returned by function \code{indiv_peakPicking }
+#' @param itab_files paths of the intensity table, often returned by function \code{indiv_peakPicking }
+#' @param fun_parallel the parallel function, could be \code{mclapply} or \code{bplapply}
+#' @param ... the parameters passed to parallel function
+#' @import parallel
+#' @import BiocParallel
 indiv_xcmsSummarize <- function( x, mtab_files, itab_files, fun_parallel = mclapply, ... ) {
   
   cat("Extracting extended chrom peaks ...\n")
-  peaks <- indiv_ChromPeaksMS2(
+  peaks <- .indiv_ChromPeaksMS2(
     x, mtab_files = mtab_files, itab_files = itab_files, fun_parallel = fun_parallel, ...
   )
   
@@ -196,7 +312,17 @@ indiv_xcmsSummarize <- function( x, mtab_files, itab_files, fun_parallel = mclap
 }
 
 
-
+#' xcms annotation function for the individual pipeline
+#' @param x an object of XCMSnExp
+#' @param mode mode. pos or neg
+#' @param massTab a data.frame of mass table having at least one column named as "monoisotopic_molecular_weight"
+#' @param refSpectra reference MS2 spectra used annotate the experimental MS2 spectra
+#' @param fun_parallel the parallel function, could be \code{mclapply} or \code{bplapply}
+#' @param ... the parameters passed to parallel function
+#' @import parallel
+#' @import BiocParallel
+#' @export
+#' 
 indiv_xcmsAnnotate <- function(
   x, mode = c("pos", "neg")[1], massTab=NULL, refSpectra = NULL, fun_parallel = mclapply, ...
 ) {
@@ -218,8 +344,6 @@ indiv_xcmsAnnotate <- function(
     matchedRefFragments = NULL,
     pheno = pheno
   )
-  
-  
   
   if (is.null(massTab)) {
     try(.validate_statsXCMS(res))
@@ -267,7 +391,7 @@ indiv_xcmsAnnotate <- function(
   }
   
   cat("Annotating MS2 spectra ... \n")
-  ms2a <- .ms2map(itab_files = x$scanIntensityTab, 
+  ms2a <- .indiv_ms2map(itab_files = x$scanIntensityTab, 
                   featureMeta = features$meta, 
                   valideRefs = ll, 
                   mode = mode, 
@@ -354,7 +478,8 @@ indiv_xcmsAnnotate <- function(
   res
 }
 
-.ms2map <- function(
+#' Internal function for ms2mapping
+.indiv_ms2map <- function(
   itab_files, featureMeta, valideRefs, mode, refs, peaks, fun_parallel, ...
 ) {
   

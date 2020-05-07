@@ -1,8 +1,8 @@
 Package: xcmsViewerProcess
 Type: Package
 Title: Processing and annotating data for xcmsViewerApp
-Version: 0.1.23
-Date: 2020-04-07
+Version: 0.2.1
+Date: 2020-05-07
 Author: Chen Meng
 Maintainer: Chen Meng <mengchen18@gmail.com>
 Description: Converting MSnExp object to simple table format, including meta table and intensity. Identified features will be annotated if annotation information (monoisotopic mass and MS2 spectra) is given. The output is ready to be visualized using xcmsViewerApp.
