@@ -76,21 +76,3 @@ plotEIC_module <- function(
     c(colorLegend(), list(file_clicked = file_click()))
     )
   }
-
-
-# ui <- fluidPage(
-#   sidebarLayout(
-#     sidebarPanel(),
-#     mainPanel(
-#       plotEIC_UI("test")
-#     )
-#   )
-# )
-# 
-# server <- function(input, output, session) {
-#   callModule(plotEIC_module, "test", react_x = reactive(x), react_diffPheno = reactive(c("T1", "T1", "T3", "T3")))
-#   # callModule(plotEIC_module, "test", react_x = reactive(qq))
-# }
-# #
-# shinyApp(ui, server)
-

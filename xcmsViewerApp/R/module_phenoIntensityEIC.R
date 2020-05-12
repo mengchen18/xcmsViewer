@@ -58,17 +58,13 @@ phenoIntensityEIC <- function(input, output, session, dat, featureSelected = rea
   # 3. EIC plot
   qt <- reactive({
     req(input$phenoCols)
-    v <- as.factor(dat()$pheno[[input$phenoCols]]) 
-    list(
-      vec = v, 
-      level = levels(v)
-      )    
+    as.character(dat()$pheno[[input$phenoCols]])
     })
 
   colvar <- callModule(
     plotEIC_module, "eic_plot",
     react_x = reactive( featureSelected()$eic ),
-    react_diffPheno = reactive( qt()$vec ),
+    react_diffPheno = qt,
     react_select = reactive( input$pheno_rows_selected ),
     react_vline = reactive( featureSelected()$rtVline ),
     reset_click = reactive( c(input$bs_or_bar_click, input$pheno_rows_selected) )
@@ -141,6 +137,4 @@ phenoIntensityEIC <- function(input, output, session, dat, featureSelected = rea
       )
     DT::selectRows(dtProxy, np$ID)
   })
-  
-  
 }
