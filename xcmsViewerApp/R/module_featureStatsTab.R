@@ -1,81 +1,87 @@
 featureStatsTab_UI <- function(id) {
   ns<- NS(id)
-
+  
   tabsetPanel(
-  tabPanel("Table",
-    wellPanel(
-        fluidRow(
-          column(
-            1, tags$div(
-                style="margin-top:25px;",
-            shinyWidgets::dropdownButton(
-                                  selectInput(ns("displayCols"), "Select columns to show", choices = NULL, multiple = TRUE),
-                                  circle = FALSE, status = "default", icon = icon("gear"), width = "1000%",
-                                  tooltip = shinyWidgets::tooltipOptions(title = "Customize displayed columns")
-                                )
-                )
-            ),
-            column(
-              3, textInput(ns("range_RT"), label = "Range RT", placeholder = "e.g. 120-130")
-            ),
-            column(
-              3, textInput(ns("range_MZ"), label = "Range MZ", placeholder = "e.g. 320-321 or 455")
-            ),
-            column(
-              3, textInput(ns("search_annot"), label = "Search metabolite", placeholder = "e.g. proline or prol")
-            ),
-            column(
-              2, tags$div(
-                style="margin-top:25px;",
-                actionButton(ns("sbutton"), "Filter")
-                )
-              )
-          
-      ),
-    DT::dataTableOutput(ns("featureTable"))
-    )    
+    tabPanel("Table",
+             wellPanel(
+               fluidRow(
+                 column(
+                   1, tags$div(
+                     style="margin-top:25px;",
+                     shinyWidgets::dropdownButton(
+                       selectInput(ns("displayCols"), "Select columns to show", choices = NULL, multiple = TRUE),
+                       circle = FALSE, status = "default", icon = icon("gear"), width = "1000%",
+                       tooltip = shinyWidgets::tooltipOptions(title = "Customize displayed columns")
+                     )
+                   )
+                 ),
+                 column(
+                   3, textInput(ns("range_RT"), label = "Range RT", placeholder = "e.g. 120-130")
+                 ),
+                 column(
+                   3, textInput(ns("range_MZ"), label = "Range MZ", placeholder = "e.g. 320-321 or 455")
+                 ),
+                 column(
+                   3, textInput(ns("search_annot"), label = "Search metabolite", placeholder = "e.g. proline or prol")
+                 ),
+                 column(
+                   2, tags$div(
+                     style="margin-top:25px;",
+                     actionButton(ns("sbutton"), "Filter")
+                   )
+                 )
+                 
+               ),
+               DT::dataTableOutput(ns("featureTable"))
+             )    
     ) 
     ,
-      tabPanel(
-        "Figure",
-        wellPanel(
-          scatterD3_UI(ns("scatter")),
-          scatterD3_plot(ns("scatter"))
-        )
+    tabPanel(
+      "Plot features",
+      wellPanel(
+        scatterD3_UI(ns("scatter")),
+        scatterD3_plot(ns("scatter"))
+      )
+    ),
+    tabPanel(
+      "Plot samples",      
+      wellPanel(
+        scatterD3_UI(ns("scatterPheno")),
+        scatterD3_plot(ns("scatterPheno"))          
       )
     )
-
+  )
 }
 
 
 featureStatsTab <- function(input, output, session, dat, dataChanged) {
-
+  
   featureTab <- reactive({
     req(dat())
-
+    
     input$sbutton
-      isolate({
-        r_rt <- parseRange(input$range_RT)
-        r_mz <- parseRange(input$range_MZ)
-        s_meta <- input$search_annot    
-        i1 <- dat()$features$meta$mzmed > r_mz[1] & dat()$features$meta$mzmed < r_mz[2]
-        i2 <- dat()$features$meta$rtmed > r_rt[1] & dat()$features$meta$rtmed < r_rt[2]
-        i3 <- TRUE
-        if (s_meta != "")
-          i3 <- sapply(dat()$annotationMass, function(x) {
-            any(grepl(s_meta, x$name, ignore.case = TRUE))
-          })
-      })
+    isolate({
+      r_rt <- parseRange(input$range_RT)
+      r_mz <- parseRange(input$range_MZ)
+      s_meta <- input$search_annot    
+      i1 <- dat()$features$meta$mzmed > r_mz[1] & dat()$features$meta$mzmed < r_mz[2]
+      i2 <- dat()$features$meta$rtmed > r_rt[1] & dat()$features$meta$rtmed < r_rt[2]
+      i3 <- TRUE
+      if (s_meta != "")
+        i3 <- sapply(dat()$annotationMass, function(x) {
+          any(grepl(s_meta, x$name, ignore.case = TRUE))
+        })
+    })
     dat()$features$meta[i1 & i2 & i3, ]
   })
-
+  
   observe({
     updateSelectInput(session, "displayCols", choices = colnames(featureTab()), 
-      selected = intersect(
-        c("ID", "Annotation", "QC", "mzmed", "rtmed"), 
-        colnames(featureTab())
-        )
-      )
+                      selected = intersect(
+                        c("ID", "Annotation", "QC", "mzmed", "rtmed"), 
+                        colnames(featureTab())
+                      )
+    )
   })
   
   ## render the table
@@ -98,22 +104,33 @@ featureStatsTab <- function(input, output, session, dat, dataChanged) {
   observeEvent(list(input$sbutton, dataChanged(), featureTab(), dat()), {
     print("feature selected set to NULL!")
     featureRowSelected(NULL) 
-    })
+  })
   observe( 
     featureRowSelected( input$featureTable_rows_selected )
+  )
+  
+  ### scatter samples
+  phenoTab <- reactive( 
+    cbind(
+      dat()$pheno, 
+      t(dat()$feature$intensities[, -1])
+      )
     )
 
+  plot2dObservations <- callModule(
+    scatterD3_Module, id = "scatterPheno", data = phenoTab, clickRetVar = reactive(colnames(phenoTab())[1])
+  )
   ### scatter
   plot2d <- callModule(
     scatterD3_Module, id = "scatter", data = featureTab, clickRetVar = reactive("ID")
-    )
+  )
   observe({
     featureRowSelected( plot2d() )
-    })
+  })
   
   ## after select a row from the table, returns
   reactive({
-
+    
     req( featureRowSelected() )
     res <- list()
     
@@ -131,7 +148,7 @@ featureStatsTab <- function(input, output, session, dat, dataChanged) {
       mtab = dat()$scanMetaTab, 
       rt = c(f$rtmin - 60, f$rtmax + 60), 
       mz = c(f$mzmin - mzoff, f$mzmax + mzoff)
-      )
+    )
     
     # 3. vline in eic plot
     res$rtVline <- c(

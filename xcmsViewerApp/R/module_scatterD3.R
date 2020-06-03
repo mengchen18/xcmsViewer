@@ -1,13 +1,13 @@
 scatterD3_UI <- function(id) {
   ns <- NS(id)
   tagList(
-    div(style="display: inline-block;vertical-align:top; width: 24%;", varSelectInput(ns("sctd3_var_x"), label = "X-axis", data = NULL) ),
-    div(style="display: inline-block;vertical-align:top; width: 24%;", varSelectInput(ns("sctd3_var_y"), label = "Y-axis", data = NULL) ),    
-    div(style="display: inline-block;vertical-align:top; width: 24%;", varSelectInput(ns("sctd3_var_col"), label = "Point color", data = NULL) ),   
+    div(style="display: inline-block;vertical-align:top; width: 24%;", varSelectizeInput(ns("sctd3_var_x"), label = "X-axis", data = NULL) ),
+    div(style="display: inline-block;vertical-align:top; width: 24%;", varSelectizeInput(ns("sctd3_var_y"), label = "Y-axis", data = NULL) ),    
+    div(style="display: inline-block;vertical-align:top; width: 24%;", varSelectizeInput(ns("sctd3_var_col"), label = "Point color", data = NULL) ),   
     div(style="display: inline-block;vertical-align:top; width: 24%;", sliderInput(ns("sctd3_var_p_opacity"), label = "Point opacity", min = 0, max = 1, value = 0.7)), 
-    div(style="display: inline-block;vertical-align:top; width: 24%;", varSelectInput(ns("sctd3_var_pch"), label = "Point shape", data = NULL) ),    
-    div(style="display: inline-block;vertical-align:top; width: 24%;", varSelectInput(ns("sctd3_var_cex"), label = "Point size", data = NULL) ),    
-    div(style="display: inline-block;vertical-align:top; width: 24%;", varSelectInput(ns("sctd3_var_tooltips"), label = "Tooptips Info", data = NULL, multiple = TRUE) ),
+    div(style="display: inline-block;vertical-align:top; width: 24%;", varSelectizeInput(ns("sctd3_var_pch"), label = "Point shape", data = NULL) ),    
+    div(style="display: inline-block;vertical-align:top; width: 24%;", varSelectizeInput(ns("sctd3_var_cex"), label = "Point size", data = NULL) ),    
+    div(style="display: inline-block;vertical-align:top; width: 24%;", varSelectizeInput(ns("sctd3_var_tooltips"), label = "Tooptips Info", data = NULL, multiple = TRUE) ),
     div(style="display: inline-block;vertical-align:top; width: 24%;", sliderInput(ns("sctd3_var_sizerange"), label = "Point size range", min = 1, max = 1000, value = c(20, 400)) )
   )
 }
@@ -30,15 +30,15 @@ scatterD3_Module <- function(
   f0 <- function(x, v) {
     if (length(xx <- intersect(v, x)) > 0)
       return(xx)
-    NA
+    ""
   }
 
-  observe( updateVarSelectizeInput(session, "sctd3_var_x", data = data(), selected = f0("rtmed", colnames(data()))) )
-  observe( updateVarSelectizeInput(session, "sctd3_var_y", data = data(), selected = f0("mzmed", colnames(data())) ) )
-  observe( updateVarSelectizeInput(session, "sctd3_var_col", data = data(), selected = f0("QC", colnames(data()))) )
-  observe( updateVarSelectizeInput(session, "sctd3_var_pch", data = data(), selected = NA) )
-  observe( updateVarSelectizeInput(session, "sctd3_var_cex", data = data(), selected = f0("npeaks", colnames(data()))) )
-  observe( updateVarSelectizeInput(session, "sctd3_var_tooltips", data = data(), selected = NA) )
+  observe( updateVarSelectizeInput(session, "sctd3_var_x", data = data2(), selected = f0("rtmed", colnames(data2()))) )
+  observe( updateVarSelectizeInput(session, "sctd3_var_y", data = data2(), selected = f0("mzmed", colnames(data2())) ) )
+  observe( updateVarSelectizeInput(session, "sctd3_var_col", data = data2(), selected = "") )
+  observe( updateVarSelectizeInput(session, "sctd3_var_pch", data = data2(), selected = "") )
+  observe( updateVarSelectizeInput(session, "sctd3_var_cex", data = data2(), selected = f0("npeaks", colnames(data2()))) )
+  observe( updateVarSelectizeInput(session, "sctd3_var_tooltips", data = data2(), selected = "") )
   
   output$scatterPlot <- scatterD3::renderScatterD3({
 
@@ -62,8 +62,8 @@ scatterD3_Module <- function(
       ttvar <- do.call(function(...) paste(..., sep="<br />"), ttvar)
       print(ttvar)
     } else
-      ttvar <- NULL    
-
+      ttvar <- NULL
+    
     scatterD3::scatterD3(
       x = data2()[, var_x], y = data2()[, var_y],
       
