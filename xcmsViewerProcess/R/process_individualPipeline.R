@@ -83,10 +83,6 @@ indiv_summarizeExp <- function(
   
 }
 
-
-
-
-
 #' peak picking for individual pipeline 
 #' @description peaks picking are peroformed one raw file after another so that less memory
 #'   used. 
