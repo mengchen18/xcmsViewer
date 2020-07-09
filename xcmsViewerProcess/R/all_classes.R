@@ -1,7 +1,6 @@
 #' @import fastmatch, Biobase
 #' 
 ############################# global variables ########################
-
 .xcmsViewerInternalObjects <- new.env()
 
 # xcmsFeatureSet
@@ -29,6 +28,32 @@
 .xcmsViewerInternalObjects$xcmsPeak_table_column_class <- c(
   "character", "integer", "character", "numeric", "numeric", "numeric", 
   "numeric", "numeric", "numeric", "numeric", "numeric", "character")
+
+# xcmsAnnot
+.xcmsViewerInternalObjects$xcmsAnnot_MS1Annot_column <- c(
+  "feature_ID", "annot_internal_ID", "adduct", "monoisotopic_weight", "query_weight", 
+  "mass_diff", "delta_PPM", "annot_MS2")
+.xcmsViewerInternalObjects$xcmsAnnot_MS1Annot_column_class <- c(
+  "character", "character", "character", "numeric", "numeric", "numeric", "numeric", "factor")
+
+
+.xcmsViewerInternalObjects$xcmsAnnot_MS1Meta_column <- c(
+  "annot_internal_ID", "name", "chemical_formula", "molecular_weight", 
+  "annot_database", "CAS_reg", "InChI", "SMILE", "annot_database_ID")
+.xcmsViewerInternalObjects$xcmsAnnot_MS1Meta_column_class <- c(
+  "character", "character", "character", "numeric", "character", "character", 
+  "character", "character", "character")
+
+.xcmsViewerInternalObjects$xcmsAnnot_MS2Match_column <- c(
+  "ms2_scan_ID", "annot_ms2_internal_ID", "cos")
+.xcmsViewerInternalObjects$xcmsAnnot_MS2Match_column_class <- c(
+  "character", "character", "numeric")
+
+.xcmsViewerInternalObjects$xcmsAnnot_MS2RefMeta_column <- c(
+  "annot_ms2_internal_ID", "annot_internal_ID", "collision_energy_level", 
+  "collision_energy_voltage", "ionization_mode", "predicted", "database")
+.xcmsViewerInternalObjects$xcmsAnnot_MS2RefMeta_column_class <- c(
+  "character", "character", "factor", "numeric", "factor", "logical", "character")
 
 
 ############################ prunedXcmsSet ############################
@@ -245,33 +270,6 @@ setClass(
     MS2Match = "data.frame"
   ))
 
-# xcmsAnnot
-.xcmsViewerInternalObjects$xcmsAnnot_MS1Annot_column <- c(
-  "feature_ID", "annot_internal_ID", "adduct", "monoisotopic_weight", "query_weight", 
-  "mass_diff", "delta_PPM", "annot_MS2")
-.xcmsViewerInternalObjects$xcmsAnnot_MS1Annot_column_class <- c(
-  "character", "character", "character", "numeric", "numeric", "numeric", "numeric", "factor")
-
-
-.xcmsViewerInternalObjects$xcmsAnnot_MS1Meta_column <- c(
-  "annot_internal_ID", "name", "chemical_formula", "molecular_weight", 
-  "annot_database", "CAS_reg", "InChI", "SMILE", "annot_database_ID")
-.xcmsViewerInternalObjects$xcmsAnnot_MS1Meta_column_class <- c(
-  "character", "character", "character", "numeric", "character", "character", 
-  "character", "character", "character")
-
-.xcmsViewerInternalObjects$xcmsAnnot_MS2Match_column <- c(
-  "ms2_scan_ID", "annot_ms2_internal_ID", "cos")
-.xcmsViewerInternalObjects$xcmsAnnot_MS2Match_column_class <- c(
-  "character", "character", "numeric")
-
-.xcmsViewerInternalObjects$xcmsAnnot_MS2RefMeta_column <- c(
-  "annot_ms2_internal_ID", "annot_internal_ID", "collision_energy_level", 
-  "collision_energy_voltage", "ionization_mode", "predicted", "database")
-.xcmsViewerInternalObjects$xcmsAnnot_MS2RefMeta_column_class <- c(
-  "character", "character", "factor", "numeric", "factor", "logical", "character")
-
-
 setMethod("initialize", "xcmsAnnot", function(
   .Object, MS1Annot, MS1Meta, MS2RefList, MS2RefMeta, MS2Match
 ) {
@@ -375,13 +373,6 @@ setValidity("xcmsAnnot", function(object) {
     str = "object@MS2RefMeta",
     contain = TRUE
   )
-  
-  # named list of data.frame
-  # the name can be mapped to MS1Annot$annot_database
-  # the data.frame has at list one column, named as "annot_database_ID"
-  
-  
-  
 })
 
 
