@@ -6,9 +6,11 @@
 
 # xcmsFeatureSet
 .xcmsViewerInternalObjects$xcmsFeatureSet_fdata_name <- c(
-  "mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax", "npeaks", "peakidx", "ID", "annotation")
+  "mzmed", "mzmin", "mzmax", "rtmed", "rtmin", "rtmax", "npeaks", 
+  "peakidx", "ID", "annot_ms1", "annot_ms2")
 .xcmsViewerInternalObjects$xcmsFeatureSet_fdata_name_class <- c(
-  "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "AsIs", "character", "character")
+  "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", 
+  "numeric", "AsIs", "character", "character", "character")
 
 # xcmsScan
 .xcmsViewerInternalObjects$xcmsScan_meta_column <- c(
@@ -23,11 +25,21 @@
 # xcmsPeak
 .xcmsViewerInternalObjects$xcmsPeak_table_column <- c(
   "ID", "sample", "masterPeak", "into", "mz", "mzmin", 
-  "mzmax", "rt", "rtmin", "rtmax", "intb", "sn", "ms2Scan")
+  "mzmax", "rt", "rtmin", "rtmax", "sn", "ms2Scan")
 .xcmsViewerInternalObjects$xcmsPeak_table_column_class <- c(
   "character", "integer", "character", "numeric", "numeric", "numeric", 
-  "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "character")
+  "numeric", "numeric", "numeric", "numeric", "numeric", "character")
 
+
+############################ prunedXcmsSet ############################
+setClass(
+  "prunedXcmsSet", 
+  slot = c(
+    featureSet = "xcmsFeatureSet",
+    peak = "xcmsPeak",
+    scan = "xcmsScan"
+  )
+)
 
 
 ############################ xcmsFeatureSet ############################
@@ -37,37 +49,39 @@ setClass(
   contains = "ExpressionSet"
 )
 
-setMethod("initialize", "xcmsFeatureSet", function(.Object, intensity, masterPeak, fdata, ...) {
+setMethod("initialize", "xcmsFeatureSet", function(.Object, intensity, masterPeak, ...) {
+  
   mv <- new.env()
   if (missing(intensity))
     mv$exprs <- matrix(numeric(0), 0, 0) else
       mv$exprs <- intensity
-  if (missing(masterPeak))
-    mv$masterPeak <- matrix(character(0), 0, 0) else
-      mv$masterPeak <- masterPeak
-  
-  obj <- new("ExpressionSet", assayData = mv, ...)
-  
-  if (missing(fdata)) {
-    nr <- nrow(exprs(obj))
-    fData(obj) <- data.frame(
-      mzmed = numeric(nr),
-      mzmin = numeric(nr),
-      mzmax = numeric(nr),
-      rtmed = numeric(nr),
-      rtmin = numeric(nr),
-      rtmax = numeric(nr),
-      npeaks = numeric(nr),
-      peakidx = I(rep(NA, nr)),
-      ID = character(nr),
-      annotation = character(nr),
-      stringsAsFactors = FALSE)
-  }
-  
-  
-  class(obj) <- "xcmsFeatureSet"
-  validObject(obj)
-  obj
+    if (missing(masterPeak))
+      mv$masterPeak <- matrix(character(0), 0, 0) else
+        mv$masterPeak <- masterPeak
+      
+      obj <- new("ExpressionSet", assayData = mv, ...)
+      ll <- list(...)
+      
+      if (!"featureData" %in% names(ll)) {
+        nr <- nrow(exprs(obj))
+        fData(obj) <- data.frame(
+          mzmed = numeric(nr),
+          mzmin = numeric(nr),
+          mzmax = numeric(nr),
+          rtmed = numeric(nr),
+          rtmin = numeric(nr),
+          rtmax = numeric(nr),
+          npeaks = numeric(nr),
+          peakidx = I(rep(NA, nr)),
+          ID = character(nr),
+          annot_ms1 = character(nr),
+          annot_ms2 = character(nr),
+          stringsAsFactors = FALSE)
+      }
+      
+      class(obj) <- "xcmsFeatureSet"
+      validObject(obj)
+      obj
 })
 
 setValidity("xcmsFeatureSet", function(object) {
@@ -117,7 +131,6 @@ setMethod("initialize", "xcmsPeak", function(.Object, table, param, postFilter) 
       "rt" = numeric(0),
       "rtmin" = numeric(0),
       "rtmax" = numeric(0),
-      "intb" = numeric(0),
       "sn" = numeric(0),
       "ms2Scan" = character(0),
       stringsAsFactors = FALSE
@@ -128,14 +141,14 @@ setMethod("initialize", "xcmsPeak", function(.Object, table, param, postFilter) 
   if (missing(param))
     .Object@param <- NULL else
       .Object@param <- param
-  
-  if (missing(postFilter))
-    .Object@postFilter <- NULL else
-      .Object@postFilter <- postFilter
-  
-  validObject(.Object)
-  return(.Object)
-        
+    
+    if (missing(postFilter))
+      .Object@postFilter <- NULL else
+        .Object@postFilter <- postFilter
+      
+      validObject(.Object)
+      return(.Object)
+      
 })
 
 setValidity("xcmsPeak", function(object) {
@@ -154,11 +167,12 @@ setClass(
   "xcmsScan", 
   slots = c(
     meta = "data.frame",
-    intensity = "data.frame"
+    intensity = "data.frame",
+    filter = "list"
   )
 )
 
-setMethod("initialize", "xcmsScan", function(.Object, meta, intensity) {
+setMethod("initialize", "xcmsScan", function(.Object, meta, intensity, filter) {
   
   object <- .Object
   
@@ -189,8 +203,12 @@ setMethod("initialize", "xcmsScan", function(.Object, meta, intensity) {
       ) else
         object@intensity <- intensity
       
-      validObject(object)
-      return(object)
+      if (missing(filter))
+        object@filter <- list() else
+          object@filter <- filter
+        
+        validObject(object)
+        return(object)
 })
 
 
@@ -201,7 +219,7 @@ setValidity("xcmsScan", function(object) {
     name = .xcmsViewerInternalObjects$xcmsScan_meta_column,
     class = .xcmsViewerInternalObjects$xcmsScan_meta_column_class,
     str = "object@meta"
-    )
+  )
   
   .validRestrictedDataFrame(
     df = object@intensity, 

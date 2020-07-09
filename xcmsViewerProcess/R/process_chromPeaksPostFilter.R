@@ -27,7 +27,7 @@ chromPeaksPostFilter <- function(
     ms1.noise = ms1.noise, ms1.maxPeaks = ms1.maxPeaks, ms1.maxIdenticalInt = ms1.maxIdenticalInt,
     ms2.noise = ms2.noise, ms2.maxPeaks = ms2.maxPeaks, ms2.maxIdenticalInt = ms2.maxIdenticalInt, 
     ...)  
-
+  
   fi <- fastmatch::fmatch(itable_orig$ID, mtable$ID)
   iir <- mtable$msLevel[fi] == 1 & itable_orig$intensity >= postfilter[2]
   itable <- itable_orig[iir, ]
