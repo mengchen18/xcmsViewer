@@ -41,8 +41,19 @@ prep_annotation_hmdb_msms <- function(xmlFolder, ...) {
     meta[[nn]] <- as.character(meta[[nn]])
   numcol <- c("sample-concentration", "sample-mass", "mono-mass", "collision-energy-voltage")
   meta[numcol] <- lapply(meta[numcol], function(x) as.numeric(as.character(x)))
-  meta$id2 <- .msms_id_creater(meta$id, db = "hmdb")
-  # paste0("MSMS", stringr::str_pad(meta$id, width = 9, pad = "0"))
+
+  meta <- data.frame(
+    "mono_mass" = meta$"mono-mass",
+    "solvent" = meta$solvent,
+    "collision_energy_level" = meta$"collision-energy-level",
+    "collision_energy_voltage" = meta$"collision-energy-voltage",
+    "ionization_mode" = meta$"ionization-mode",
+    "predicted" = meta$"predicted",
+    "database" = "HMDB",
+    "database_id" = meta$"database-id",
+    "structure_id" = meta$"structure-id",
+    stringsAsFactor = FALSE
+    )
   
   peakList <- lapply(fl, "[[", "peakList")
   names(peakList) <- meta$id2

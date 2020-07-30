@@ -30,8 +30,19 @@ prep_annotation_hmdb <- function(x) {
   ext[ext == "monisotopic_molecular_weight"] <- "monoisotopic_molecular_weight"
   colnames(ss) <- ext  
   ss <- data.frame(ss, stringsAsFactors = FALSE)
-  
   ss$average_molecular_weight <- as.numeric(ss$average_molecular_weight)
   ss$monoisotopic_molecular_weight <- as.numeric(ss$monoisotopic_molecular_weight) 
-  ss
+
+  data.frame(
+    "name" = ss$name, 
+    "chemical_formula" = ss$chemical_formula, 
+    "ave_molecular_weight" = ss$average_molecular_weight, 
+    "monoisotopic_weight" = ss$monoisotopic_molecular_weight, 
+    "annot_database" = "HMDB", 
+    "CAS_reg" = ss$cas_registry_number, 
+    "InChI" = NA, 
+    "SMILE" = NA, 
+    "annot_database_ID" = ss$accession,
+    stringsAsFactors = FALSE)
+  
 }
