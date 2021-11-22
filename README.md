@@ -34,6 +34,6 @@ need to install any program to explore the results.
 ## xcmsViewerApp
 Installation
 ```{r}
-devtools::install_github("mengchen18/xcmsViewer/xcmsViewer")
+devtools::install_github("mengchen18/xcmsViewer")
 ```
 This command will open a shiny app. User can select the dataset to load (there is only one as an example) using the selection box on the topright corner.
