@@ -16,7 +16,7 @@
 plotly_EIC <- function(x, range, xlim = NULL, legend.title = "Group", col=NA) {
   
   im <- max(x$intensity)*1.05
-  if (is.na(col)) {
+  if (is.na(col[1])) {
     ucv <- unique(x$colorGroup)
     cc <- sort(distinctColorPalette(k = length(ucv)))
     names(cc) <- ucv
