@@ -4,8 +4,21 @@
 \alias{EIC_module}
 \title{Module for EIC}
 \usage{
+<<<<<<< HEAD
 EIC_module(input, output, session, pdata, object, obj,
   switchOnRepPeak = 12, file = reactive(NULL))
+=======
+EIC_module(
+  input,
+  output,
+  session,
+  pdata,
+  object,
+  obj,
+  switchOnRepPeak = 12,
+  file = reactive(NULL)
+)
+>>>>>>> master
 }
 \arguments{
 \item{input}{input}

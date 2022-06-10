@@ -55,11 +55,18 @@ exportMethods(getScanUniqueID)
 import(Biobase)
 import(BiocParallel)
 import(DBI)
+<<<<<<< HEAD
 import(ExpressionSetViewer)
+=======
+>>>>>>> master
 import(RSQLite)
 import(fastmatch)
 import(graphics, except = layout)
 import(methods)
+<<<<<<< HEAD
+=======
+import(omicsViewer)
+>>>>>>> master
 import(openxlsx)
 import(parallel)
 import(plotly, except = groups)
@@ -79,7 +86,10 @@ importFrom(Biobase,exprs)
 importFrom(Biobase,fData)
 importFrom(Biobase,pData)
 importFrom(BiocParallel,bplapply)
+<<<<<<< HEAD
 importFrom(ExpressionSetViewer,fillNA)
+=======
+>>>>>>> master
 importFrom(MAIT,Biotransformations)
 importFrom(MSnbase,spectrapply)
 importFrom(S4Vectors,DataFrame)
@@ -87,6 +97,10 @@ importFrom(beeswarm,beeswarm)
 importFrom(grDevices,rgb)
 importFrom(matrixStats,colMedians)
 importFrom(matrixStats,rowVars)
+<<<<<<< HEAD
+=======
+importFrom(omicsViewer,fillNA)
+>>>>>>> master
 importFrom(randomcoloR,distinctColorPalette)
 importFrom(reshape2,acast)
 importFrom(shinythemes,shinytheme)

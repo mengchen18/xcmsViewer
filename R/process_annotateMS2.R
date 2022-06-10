@@ -17,17 +17,24 @@ annotateMS2 <- function(x, ms1Annot, ppmtol = 20) {
     measured_cs <- fdata$ms2spectrum[fdata$ID == fid]
     if (nchar(measured_cs) > 0) {
       measured_cs <- str2spectra(measured_cs)
+<<<<<<< HEAD
       # measured_cs <- strsplit(measured_cs, split = "\\|")[[1]]
       # measured_cs <- lapply(measured_cs, function(it) strsplit(it, ";")[[1]])
       # measured_cs <- data.frame(
       #   mz = as.numeric(measured_cs[[1]]),
       #   intensity = as.numeric(measured_cs[[2]]))
+=======
+>>>>>>> master
       if (nchar(ms1Annot$ms2_mass[i]) > 0) {
         ref_cs <- data.frame(
           mz = as.numeric(strsplit(ms1Annot$ms2_mass[i], ";")[[1]]),
           intensity = as.numeric(strsplit(ms1Annot$ms2_intensity[i], ";")[[1]])
         )
+<<<<<<< HEAD
         cos <- cospec(measured = measured_cs, standard = ref_cs)
+=======
+        cos <- cospec(measured = measured_cs, standard = ref_cs, ppmtol = ppmtol)
+>>>>>>> master
       }
     }
     attr(cos, "ppmtol") <- ppmtol
@@ -56,7 +63,10 @@ scoreAnnot <- function(x, an2) {
   # RT score
   rt <- structure(fdata$rtmed, names = rownames(fdata))
   rtstd <- an2$RT
+<<<<<<< HEAD
   rtstd[!an2$internalStd] <- NA
+=======
+>>>>>>> master
   scr_rt <- rtScore(rt[an2$ID], an2$RT)
   
   # Final score

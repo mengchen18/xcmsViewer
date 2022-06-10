@@ -4,9 +4,21 @@
 \alias{mirrorPlot}
 \title{Mirror plot of MS2 fragmentation patterns}
 \usage{
+<<<<<<< HEAD
 mirrorPlot(peak.upper, peak.lower, legend.peak.lower = "",
   legend.peak.upper = "", ppmtol = 10, highlight = NULL,
   xlim = NULL)
+=======
+mirrorPlot(
+  peak.upper,
+  peak.lower,
+  legend.peak.lower = "",
+  legend.peak.upper = "",
+  ppmtol = 10,
+  highlight = NULL,
+  xlim = NULL
+)
+>>>>>>> master
 }
 \arguments{
 \item{peak.upper}{the peak.upper fragmentation pattern, a data.frame with two columns named "mz" and "intensity"}

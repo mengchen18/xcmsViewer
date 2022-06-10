@@ -8,7 +8,11 @@
 #' @importFrom grDevices rgb
 #' @importFrom utils packageVersion
 #' @import RSQLite DBI
+<<<<<<< HEAD
 #' @import ExpressionSetViewer
+=======
+#' @import omicsViewer
+>>>>>>> master
 
 xcmsViewer <- function(dir, ...) {
   otherParams <- list(...)
@@ -37,7 +41,11 @@ xcmsViewer <- function(dir, ...) {
     r
   }
 
+<<<<<<< HEAD
   ExpressionSetViewer::ExpressionSetViewer(
+=======
+  omicsViewer(
+>>>>>>> master
     dir,
     filePattern = ".RDS$|.DB$",
     esetLoader = function(x) {
@@ -53,6 +61,7 @@ xcmsViewer <- function(dir, ...) {
       }
       obj
       },
+<<<<<<< HEAD
     exprsGetter = function(x)  {
       getFeatureExprs(x)      
     },
@@ -62,6 +71,12 @@ xcmsViewer <- function(dir, ...) {
     fDataGetter = function(x) {
       getFeatureMeta(x)
     },
+=======
+    exprsGetter = getFeatureExprs,
+    pDataGetter = getPheno,
+    fDataGetter = getFeatureMeta,
+    defaultAxisGetter = function(x, what) attr(x, what),
+>>>>>>> master
     additionalTabs = ll,
     appName = "XcmsViewer",
     appVersion = packageVersion("xcmsViewer")

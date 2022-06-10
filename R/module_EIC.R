@@ -3,7 +3,11 @@ EIC_ui <- function(id, layoutFun = function(EICplot, colorControl, repPeakContro
     column(
       1,
       shinyWidgets::dropdownButton(
+<<<<<<< HEAD
         circle = FALSE, status = "default", icon = icon("gear"), width = "800px", right = FALSE,
+=======
+        circle = FALSE, status = "default", icon = icon("cog"), width = "800px", right = FALSE,
+>>>>>>> master
         tooltip = shinyWidgets::tooltipOptions(title = "Click to modify colors for EIC!"),
         br(),
         colorControl, # place holder 2 - color control widget,
@@ -18,7 +22,11 @@ EIC_ui <- function(id, layoutFun = function(EICplot, colorControl, repPeakContro
 ) {
   ns <- NS(id)
   EICplot <- plotlyOutput(ns("ms1eic"), height = "320px")
+<<<<<<< HEAD
   colorControl <- ExpressionSetViewer::triselector_ui(ns("eic_color"))
+=======
+  colorControl <- triselector_ui(ns("eic_color"))
+>>>>>>> master
   repPeakControl <- shinyWidgets::switchInput( inputId = ns("repeic"), size = "mini", label = "Representative EIC only", value = FALSE, labelWidth = 450)
   layoutFun(EICplot, colorControl, repPeakControl)
 }
@@ -48,7 +56,11 @@ EIC_module <- function(
     str_split_fixed(colnames(pdata()), "\\|", n = 3)
   })
   v1 <- callModule(
+<<<<<<< HEAD
     ExpressionSetViewer::triselector_module, id = "eic_color", reactive_x = triset, label = "Color"
+=======
+    triselector_module, id = "eic_color", reactive_x = triset, label = "Color"
+>>>>>>> master
   )
   colvar <- reactiveVal("EIC")
   eiccol <- reactiveVal(c(EIC = "gray"))
@@ -75,12 +87,25 @@ EIC_module <- function(
     req(pks <- pks())
     pks <- pks[pks$masterPeak == "+", ]
     file <- NA
+<<<<<<< HEAD
+=======
+
+>>>>>>> master
     if (!is.null(file())) {
       file <- file()
     } else if (input$repeic) {
       ii <- c(
+<<<<<<< HEAD
         which.max(pks$"General|All|rtmed"), which.min(pks$"General|All|rtmed"), which.max(pks$sn), 
         which.min(pks$sn), which.max(pks$into), which.min(pks$into))
+=======
+        which.max(pks$"General|All|rtmed"), 
+        which.min(pks$"General|All|rtmed"), 
+        which.max(pks$sn), 
+        which.min(pks$sn), 
+        which.max(pks$into), 
+        which.min(pks$into))
+>>>>>>> master
       ii <- pks$sample[ii]
       for (ic in colvar()) {
         tu <- pks[colvar() == ic, ]
@@ -89,7 +114,11 @@ EIC_module <- function(
       file <- unique(na.omit(ii))
     }
     df <- getEICFromFeatureID(object(), ID = obj()$featureid)
+<<<<<<< HEAD
     if (!is.na(file))
+=======
+    if (any(!is.na(file)))
+>>>>>>> master
       df <- df[which(df$file %in% file), ]
     req(nrow(df) > 1)
     cv <- colvar()

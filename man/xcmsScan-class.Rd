@@ -6,8 +6,12 @@
 \alias{initialize,xcmsScan-method}
 \title{xcmsScan S4 class}
 \usage{
+<<<<<<< HEAD
 \S4method{initialize}{xcmsScan}(.Object, meta, intensity, filter,
   keepMS1 = TRUE)
+=======
+\S4method{initialize}{xcmsScan}(.Object, meta, intensity, filter, keepMS1 = TRUE)
+>>>>>>> master
 }
 \arguments{
 \item{.Object}{object}

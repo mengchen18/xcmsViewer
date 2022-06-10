@@ -6,11 +6,20 @@
 #' @param median.center logical; whether the expression matrix should be median centered
 #' @param fillNA whether the NA should be filled
 #' @param ... other parameters passed to t.test
+<<<<<<< HEAD
 #' @importFrom ExpressionSetViewer fillNA
+=======
+#' @importFrom omicsViewer fillNA
+>>>>>>> master
 #' @importFrom matrixStats colMedians
 #' 
 multi.t.test2 <- function(x, pheno, compare = NULL, median.center = FALSE, fillNA = TRUE, ...) {
   
+<<<<<<< HEAD
+=======
+  if (ncol(x) == 1)
+    fillNA <- FALSE
+>>>>>>> master
   x.raw <- x
   if (is.null(rownames(x))) rownames(x) <- 1:nrow(x)
   if (fillNA) x <- fillNA(x)
@@ -80,6 +89,12 @@ pca <- function(x, n = 6, prefix = "", fillNA = TRUE, samples = NULL) {
   temp_sample <- matrix(NA, nrow = ncol(x), ncol = n)  
   temp_feature <- matrix(NA, nrow = nrow(x), ncol = n)
 
+<<<<<<< HEAD
+=======
+  if (ncol(x) == 1)
+    fillNA <- FALSE
+
+>>>>>>> master
   if (fillNA) x <- fillNA(x)
   if (!is.null(samples))
     x <- x[, samples, drop = FALSE] else
@@ -219,13 +234,26 @@ prepViewerData <- function(
   ######## PCA #######
   
   pc <- multi.pca(expr, pheno = pd, compare = compare.pca, n = min(nrow(pd), nf), fillNA = fillNA)
+<<<<<<< HEAD
   fd <- cbind(fdx, pc$features)
+=======
+  
+  if (!is.null(pc$features) && nrow(pc$features) == nrow(fdx))
+    fd <- cbind(fdx, pc$features) else
+      fd <- fdx
+>>>>>>> master
   
   if (!is.null(ts))
     fd <- cbind(fd, ts[-1])
   
   colnames(pd) <- paste("General|All", colnames(pd), sep = "|")
+<<<<<<< HEAD
   pd <- cbind(pd, "Stats|All|n value" = colSums(!is.na(exprs(object@featureSet))), pc$samples)
+=======
+  pd <- cbind(pd, "Stats|All|n value" = colSums(!is.na(exprs(object@featureSet))))
+  if (!is.null(pc$samples) && nrow(pc$samples) == nrow(pd))
+    pd <- cbind(pd, pc$samples)
+>>>>>>> master
   
   pData(object@featureSet) <- pd
   fData(object@featureSet) <- fd

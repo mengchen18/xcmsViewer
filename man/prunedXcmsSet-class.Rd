@@ -14,6 +14,7 @@
 \usage{
 dumpPrunedXcmsSet(object, ...)
 
+<<<<<<< HEAD
 \S4method{dumpPrunedXcmsSet}{prunedXcmsSet}(object, db.file,
   overwrite = FALSE)
 
@@ -22,6 +23,21 @@ annotateMetabolite(object, ...)
 \S4method{annotateMetabolite}{prunedXcmsSet}(object, mode = c("pos",
   "neg")[1], ref, ppmtol = 25, ips = 0.75,
   fun_parallel = parallel::mclapply, ...)
+=======
+\S4method{dumpPrunedXcmsSet}{prunedXcmsSet}(object, db.file, overwrite = FALSE)
+
+annotateMetabolite(object, ...)
+
+\S4method{annotateMetabolite}{prunedXcmsSet}(
+  object,
+  mode = c("pos", "neg")[1],
+  ref,
+  ppmtol = 25,
+  ips = 0.75,
+  fun_parallel = parallel::mclapply,
+  ...
+)
+>>>>>>> master
 
 exportTables(object, file)
 

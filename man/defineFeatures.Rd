@@ -4,8 +4,17 @@
 \alias{defineFeatures}
 \title{define features for individual pipeline}
 \usage{
+<<<<<<< HEAD
 defineFeatures(files, mtab_files, rtParam = NULL,
   pgParam = PeakDensityParam(rep(1, length(files))))
+=======
+defineFeatures(
+  files,
+  mtab_files,
+  rtParam = NULL,
+  pgParam = PeakDensityParam(rep(1, length(files)))
+)
+>>>>>>> master
 }
 \arguments{
 \item{files}{the file paths of XCMSnExp}

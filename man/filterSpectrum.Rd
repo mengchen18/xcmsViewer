@@ -4,8 +4,12 @@
 \alias{filterSpectrum}
 \title{Filter MS spectrum}
 \usage{
+<<<<<<< HEAD
 filterSpectrum(x, noise = 30, maxPeaks = 100, maxIdenticalInt = 5,
   maxMZ = Inf)
+=======
+filterSpectrum(x, noise = 30, maxPeaks = 100, maxIdenticalInt = 5, maxMZ = Inf)
+>>>>>>> master
 }
 \arguments{
 \item{x}{An Spectrum object}

@@ -4,8 +4,20 @@
 \alias{annotateMS1}
 \title{xcms annotation of MS1}
 \usage{
+<<<<<<< HEAD
 annotateMS1(x, mode = c("pos", "neg")[1], ref, ppmtol = 10,
   ips = 0.75, fun_parallel = parallel::mclapply, ...)
+=======
+annotateMS1(
+  x,
+  mode = c("pos", "neg")[1],
+  ref,
+  ppmtol = 10,
+  ips = 0.75,
+  fun_parallel = parallel::mclapply,
+  ...
+)
+>>>>>>> master
 }
 \arguments{
 \item{x}{an object of prunedXcmsSet}

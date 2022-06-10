@@ -29,6 +29,10 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
   
   ## ================= 1. MS1 annotation table =================
   maTab <- reactive({
+<<<<<<< HEAD
+=======
+    req( length(featureSelected()$featureid) == 1 ) 
+>>>>>>> master
     an <- featureSelected()$annot
     an$ms1
   })
@@ -42,7 +46,11 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
   }
   
   output$massAnnotTab <- DT::renderDataTable({
+<<<<<<< HEAD
     req(maTab())
+=======
+    req(maTab())    
+>>>>>>> master
     tab <- maTab()[, setdiff(colnames(maTab()), "ID")]
     tab$CID <- createLink(tab$CID)
     dt <- DT::datatable(    
@@ -61,6 +69,10 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
   ## ================= 2. MS2 scan table ================= 
   # scan meta table
   ms2scans <- reactive({
+<<<<<<< HEAD
+=======
+    req( length(featureSelected()$featureid) == 1 ) 
+>>>>>>> master
     t <- featureSelected()$ms2scanMeta[, c("ID", "rt", "tic", "peakCount", "fromFile", "precMz")]
     t[t$ID %in% featureSelected()$ms2scan$ID, ]
   })
@@ -101,7 +113,11 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
              standard = reactive(NULL),
              legend.measured  = reactive(ms2scanPeaks()$measuredLegend),
              legend.standard = reactive(NULL),
+<<<<<<< HEAD
              ppmtol = reactive(getMassTol(dat())["MS2"]))
+=======
+             ppmtol = reactive({ req(dat()); getMassTol(dat())["MS2"] }))
+>>>>>>> master
   
   ## ================= 3. MS2 scan table - linked to mirror plot =================
   # reference peak list
@@ -124,6 +140,10 @@ msAnnotation <- function(input, output, session, dat, featureSelected=reactive(N
              standard = reactive(mirrorData()$ref),
              legend.measured  = reactive("Consensus MS2 spectrum of measured"),
              legend.standard = reactive("Reference consensus spectrum"),
+<<<<<<< HEAD
              ppmtol = reactive(getMassTol(dat())["MS2"]))
+=======
+             ppmtol = reactive({ req(dat()); getMassTol(dat())["MS2"] }))
+>>>>>>> master
 }
 

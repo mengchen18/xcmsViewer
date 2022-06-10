@@ -1,0 +1,11 @@
+/_example_/
+/xcmsViewerProcess.Rcheck/
+/xcmsViewerData.Rcheck/
+/xcmsViewerApp.Rcheck/
+*tar.gz
+/xcmsViewer.Rcheck/
+/Rds/
+/xcmsViewerProcess/
+/_local_/
+*rds
+.Rhistory

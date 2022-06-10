@@ -7,7 +7,11 @@
 str2spectra(x)
 }
 \arguments{
+<<<<<<< HEAD
 \item{x}{a character (vector) of spectra instring format,
+=======
+\item{x}{a character (vector) of spectra in string format,
+>>>>>>> master
 such as "78.454;123.333;332.232|50;1500;400"}
 }
 \value{

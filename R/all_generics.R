@@ -136,7 +136,11 @@ setMethod(
     
     x <- object    
     fd <- fData(x@featureSet)    
+<<<<<<< HEAD
     fd$annot_ms2 <- ""    
+=======
+    fd$annot_m2 <- NA
+>>>>>>> master
     ptol <- data.frame(
       MSLevel = c("MS1", "MS2"),
       value = c(ppmtol, ppmtol),
@@ -148,10 +152,20 @@ setMethod(
     an2 <- annotateMS2(x = x, ms1Annot = an1, ppmtol = ppmtol)    
     an <- scoreAnnot(x = x, an2 = an2)
     an <- an[order(an$Score, decreasing = TRUE),]    
+<<<<<<< HEAD
     an <- an[.xcmsViewerInternalObjects()$xcmsAnnot_column]    
     attr(an, "PPMTol") <- ptol    
     attr(an, "IonMode") <- mode    
     
+=======
+    an <- an[.xcmsViewerInternalObjects()$xcmsAnnot_column]        
+    r <- categorizeAnnotation(fd = fd, an = an, ppmtol = ppmtol)
+    an <- r$an
+    attr(an, "PPMTol") <- ptol    
+    attr(an, "IonMode") <- mode    
+
+    fd <- r$fd
+>>>>>>> master
     ms1 <- sapply(unique(an$ID), function(x) {
       nam <- an$cpdName[an$ID == x]
       nam <- nam[1:min(3, length(nam))]
@@ -160,7 +174,10 @@ setMethod(
     ms1 <- ms1[rownames(fd)]    
     ms1[is.na(ms1)] <- ""    
     fd$annot_ms1 <- ms1    
+<<<<<<< HEAD
     fd$annot_ms2[rownames(fd) %in% an$ID[which(an$ms2_cos > 0)]] <- "+"    
+=======
+>>>>>>> master
     
     fData(x@featureSet) <- fd    
     x@annot <- an    
