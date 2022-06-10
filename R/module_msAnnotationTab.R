@@ -32,13 +32,6 @@ xcmsAnnotationTab_module <- function(
   input, output, session, pdata, fdata, expr, feature_selected, sample_selected, object
 ) {
   
-<<<<<<< HEAD
-  ns <- session$ns
-  
-  ci <- c("ID", "rtmed", "mzmed", "annot_ms1", "annot_ms2", "npeaks", "purity", "rtmin", "rtmax", "mzmin", "mzmax")
-  ftab <- reactive({
-    req(length(feature_selected()) == 1)
-=======
   ns <- session$ns  
 
   .object <- reactive({
@@ -49,7 +42,6 @@ xcmsAnnotationTab_module <- function(
   ci <- c("ID", "rtmed", "mzmed", "annot_ms1", "annot_ms2", "npeaks", "purity", "rtmin", "rtmax", "mzmin", "mzmax")
   ftab <- reactive({
     req(length(feature_selected()) == 1 && !is.logical(feature_selected()))
->>>>>>> master
     tab <- fdata()[feature_selected(), ]
     colnames(tab) <- sapply(strsplit(colnames(tab), "\\|"), "[", 3)
     tab <- tab[, c(ci, "ms2spectrum")]
@@ -60,13 +52,9 @@ xcmsAnnotationTab_module <- function(
   
   # return items 
   obj <- eventReactive(ftab(), {
-<<<<<<< HEAD
-    
-=======
 
     req(length(feature_selected()) == 1 && !is.logical(feature_selected()))
 
->>>>>>> master
     f <- ftab()
     res <- list()
     
@@ -74,11 +62,7 @@ xcmsAnnotationTab_module <- function(
     res$featureid <- f$ID # feature_selected()
     if (is.na(res$featureid))
       req(NULL)
-<<<<<<< HEAD
-    print(sprintf("feature ID selected: %s", res$featureid))
-=======
     # print(sprintf("feature ID selected: %s", res$featureid))
->>>>>>> master
     
     # 3. vline in eic plot
     res$rtVline <- c(
@@ -87,17 +71,6 @@ xcmsAnnotationTab_module <- function(
       rtmax = f$rtmax)
     
     # 4. peak table
-<<<<<<< HEAD
-    v <- getPeak(object(), rowid = f$peakidx[[1]])
-    v[sapply(v, is.numeric)] <- lapply(v[sapply(v, is.numeric)], round, digits = 4)
-    res$peakTab <- v
-    # 5. annotation
-    res$annot <- getAnnot(object(), ID = res$featureid)
-    # 6. MS2 scan and meta
-    sids <- getScanIDFromFeatureID(object = object(), ID = res$featureid)
-    res$ms2scanMeta <- getScanMeta(object(), sids)
-    res$ms2scan <- getScan2(object = object(), scanId = sids)
-=======
     v <- getPeak(.object(), rowid = f$peakidx[[1]])
     v[sapply(v, is.numeric)] <- lapply(v[sapply(v, is.numeric)], round, digits = 4)
     res$peakTab <- v
@@ -107,7 +80,6 @@ xcmsAnnotationTab_module <- function(
     sids <- getScanIDFromFeatureID(object = .object(), ID = res$featureid)
     res$ms2scanMeta <- getScanMeta(.object(), sids)
     res$ms2scan <- getScan2(object = .object(), scanId = sids)
->>>>>>> master
     # 7. consensus spectrum
     res$consensusMS2Spectrum <- str2spectra(f$ms2spectrum)
     res
@@ -115,11 +87,7 @@ xcmsAnnotationTab_module <- function(
   
   # =============== download MS2 MGF ==============
   mod <- reactive({
-<<<<<<< HEAD
-    req(ad <- getAnnot(object())$Adduct)
-=======
     req(ad <- getAnnot(.object())$Adduct)
->>>>>>> master
     nad <- nchar(ad[1])
     paste0(1, substr(ad[1], nad, nad))
   })
@@ -158,11 +126,7 @@ xcmsAnnotationTab_module <- function(
     },
     content = function(con) {
       showModal(dataModal())
-<<<<<<< HEAD
-      q <- prepareAllMGFs(object(), con)
-=======
       q <- prepareAllMGFs(.object(), con)
->>>>>>> master
       if (file.exists(con)) 
         removeModal() else
           showModal(dataModal(empty = TRUE))
@@ -172,11 +136,7 @@ xcmsAnnotationTab_module <- function(
   
   # ================ MS1 EIC plot ===================
   pks <- callModule(
-<<<<<<< HEAD
-    EIC_module, id = "eic0", pdata = pdata, object = object, obj = obj, switchOnRepPeak = 12
-=======
     EIC_module, id = "eic0", pdata = pdata, object = .object, obj = obj, switchOnRepPeak = 12
->>>>>>> master
     )
   ## =============== MS1 peaks ==================
   output$peaktable <- DT::renderDataTable(
@@ -185,11 +145,7 @@ xcmsAnnotationTab_module <- function(
 
   eic_indpeak <- reactive({
     req(i <- input$peaktable_rows_selected)
-<<<<<<< HEAD
-    eic <- getEICFromFeatureID(object(), ID = obj()$featureid)
-=======
     eic <- getEICFromFeatureID(.object(), ID = obj()$featureid)
->>>>>>> master
     p1 <- pks()[i, ]
     dd <- eic[eic$file == p1$sample, ]
     dd$colorGroup <- "EIC"
@@ -209,9 +165,5 @@ xcmsAnnotationTab_module <- function(
   })
   
   ## =============== MS2 visual =================
-<<<<<<< HEAD
-  callModule(msAnnotation, "ms2v", dat = object, featureSelected = obj)
-=======
   callModule(msAnnotation, "ms2v", dat = .object, featureSelected = obj)
->>>>>>> master
 }

@@ -4,10 +4,6 @@
 \alias{multi.t.test2}
 \title{Functions for multiple t-test}
 \usage{
-<<<<<<< HEAD
-multi.t.test2(x, pheno, compare = NULL, median.center = FALSE,
-  fillNA = TRUE, ...)
-=======
 multi.t.test2(
   x,
   pheno,
@@ -16,7 +12,6 @@ multi.t.test2(
   fillNA = TRUE,
   ...
 )
->>>>>>> master
 }
 \arguments{
 \item{x}{the expression matrix, should be log10 transformed}

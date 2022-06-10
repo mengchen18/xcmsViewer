@@ -7,11 +7,7 @@
       "peakidx", "ID", "annot_ms1", "annot_ms2", "ms2spectrum", "purity"),
     xcmsFeatureSet_fdata_name_class = c(
       "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", 
-<<<<<<< HEAD
-      "numeric", "AsIs", "character", "character", "character", "character", "numeric"),
-=======
       "numeric", "list", "character", "character", "character", "character", "numeric"),
->>>>>>> master
     
     # xcmsScan
     xcmsScan_meta_column = c(
@@ -32,18 +28,6 @@
       "numeric", "numeric", "numeric", "numeric", "numeric", "logical", "integer", "character"),
     
     # xcmsAnnot
-<<<<<<< HEAD
-    xcmsAnnot_column = c(
-      "ID", "InChIKey", "CID", "cpdName", "formula", "monoMass", "Adduct", "MassDiff", 
-      "Nmol", "IPS", "MassWithAdduct", "MassQueried", "DeltaPPM", "predicted", 
-      "internalStd", "primary", "RT", "ms2_mass", "ms2_intensity", "ms2_purity", "ms2_cos", 
-      "score_ms1", "score_ms2", "score_rt", "Score"),
-    xcmsAnnot_column_class = c(
-      "character", "character", "character", "character", "character", "numeric", "character",
-      "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", "logical",
-      "logical", "logical", "numeric", "character", "character", "numeric", "numeric", "numeric",
-      "numeric", "numeric", "numeric")
-=======
     xcmsAnnot_column = c("ID", "InChIKey", "CID", "cpdName", "formula", "monoMass", "Adduct", 
       "MassDiff", "Nmol", "IPS", "MassWithAdduct", "MassQueried", "DeltaPPM", "smiles", "RT", 
       "ms2_mass", "ms2_intensity", "ms2_purity", "ms2_cos", "score_ms1", "score_ms2", 
@@ -52,7 +36,6 @@
       "numeric", "character", "numeric", "numeric", "numeric", "numeric", "numeric", "numeric", 
       "character", "numeric", "character", "character", "numeric", "numeric", "numeric", "numeric", 
       "numeric", "numeric")
->>>>>>> master
   )
 }
 

@@ -103,19 +103,12 @@ prepareMGF <- function(scan, scanMeta, cons, mode, featureId) {
 
 
 #' Convert spectra from string format to data.frame format
-<<<<<<< HEAD
-#' @param x a character (vector) of spectra instring format,
-=======
 #' @param x a character (vector) of spectra in string format,
->>>>>>> master
 #'   such as "78.454;123.333;332.232|50;1500;400"
 #' @return a data.frame with two columns "mz" and "intensity"
 #' 
 str2spectra <- function(x) {
-<<<<<<< HEAD
-=======
   
->>>>>>> master
   if (any(is.na(x))) {
     warning("NA input in str2spectra!")
     return(NULL)

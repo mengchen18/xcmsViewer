@@ -4,12 +4,6 @@
 \alias{peakPicking}
 \title{peak picking for individual pipeline}
 \usage{
-<<<<<<< HEAD
-peakPicking(files, param, tmpdir = "xcmsViewerTemp",
-  postfilterParam = list(postfilter = c(5, 1000), ms1.noise = 100,
-  ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20, ms2.noise = 30,
-  ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, BPPARAM = bpparam()))
-=======
 peakPicking(
   files,
   param,
@@ -18,7 +12,6 @@ peakPicking(
     ms1.maxIdenticalInt = 20, ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt =
     6, BPPARAM = bpparam())
 )
->>>>>>> master
 }
 \arguments{
 \item{files}{a character vector stores the the mzXML or mzML files}

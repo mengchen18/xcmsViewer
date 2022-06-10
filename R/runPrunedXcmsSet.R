@@ -62,13 +62,8 @@ peakPicking <- function(
   # creating temp dirs 
   if (!file.exists(tmpdir))
     dir.create(tmpdir) else {
-<<<<<<< HEAD
-      unlink(tmpdir, recursive = TRUE)
-      dir.create(tmpdir)
-=======
       if (length(list.files(tmpdir)) > 0)
         stop("tmpdir is not empty, this may lead to data loss! Please select an empty folder!")
->>>>>>> master
     }
   
   dir_itab <- file.path(tmpdir, "01_itab")
@@ -149,10 +144,7 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
   
   ##### redefine groups #####
   fd <- featureDefinitions(xdata)
-<<<<<<< HEAD
-=======
   fd <- fd[, setdiff(colnames(fd), "ms_level"), drop = FALSE]
->>>>>>> master
   fd <- as.data.frame(fd)
   cpd <- as.data.frame(chromPeaks(xdata))
   cpd$idx <- 1:nrow(cpd)
@@ -291,11 +283,7 @@ runPrunedXcmsSet <- function(
   # feature annotation
   mode = c('pos', "neg")[1], 
   ref = NULL,
-<<<<<<< HEAD
-  ppmtol = 10,
-=======
   ppmtol = 25,
->>>>>>> master
   
   # parallel
   mclapplyParam = list(fun_parallel = mclapply, mc.cores = 1),

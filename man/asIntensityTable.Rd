@@ -4,11 +4,6 @@
 \alias{asIntensityTable}
 \title{summarize MSnExp into intensity list, intensities are filtered}
 \usage{
-<<<<<<< HEAD
-asIntensityTable(x, ms1.noise = 100, ms1.maxPeaks = Inf,
-  ms1.maxIdenticalInt = 20, ms2.noise = 30, ms2.maxPeaks = 100,
-  ms2.maxIdenticalInt = 6, ...)
-=======
 asIntensityTable(
   x,
   ms1.noise = 100,
@@ -19,7 +14,6 @@ asIntensityTable(
   ms2.maxIdenticalInt = 6,
   ...
 )
->>>>>>> master
 }
 \arguments{
 \item{x}{an MSnExp object}

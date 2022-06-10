@@ -4,13 +4,6 @@
 \alias{prepViewerData}
 \title{Function to perform multiple PCA}
 \usage{
-<<<<<<< HEAD
-prepViewerData(object, pheno = NULL, median.center = FALSE,
-  fillNA = TRUE, compare.t.test = NULL, compare.pca = list(`_all_` =
-  TRUE), nf = 6, ..., fx = "General|All|rtmed",
-  fy = "General|All|mzmed", sx = "PCA|All|PC1 (",
-  sy = "PCA|All|PC2 (")
-=======
 prepViewerData(
   object,
   pheno = NULL,
@@ -25,7 +18,6 @@ prepViewerData(
   sx = "PCA|All|PC1 (",
   sy = "PCA|All|PC2 ("
 )
->>>>>>> master
 }
 \arguments{
 \item{object}{the prunedXcmsSet object}

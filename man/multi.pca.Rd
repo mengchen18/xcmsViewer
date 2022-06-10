@@ -4,12 +4,7 @@
 \alias{multi.pca}
 \title{Function to perform multiple PCA}
 \usage{
-<<<<<<< HEAD
-multi.pca(x, pheno, compare = list(`_all_` = TRUE), n = 6,
-  fillNA = TRUE)
-=======
 multi.pca(x, pheno, compare = list(`_all_` = TRUE), n = 6, fillNA = TRUE)
->>>>>>> master
 }
 \arguments{
 \item{x}{the expression matrix}

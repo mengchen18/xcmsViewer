@@ -35,11 +35,7 @@ setMethod(
     ## need to try for back support
     v <- try(object@annot@ppmtol, silent = TRUE)
     if (inherits(v, "try-error") || is.null(v))
-<<<<<<< HEAD
-      return(c(MS1 = 10, MS2 = 10))
-=======
       return(c(MS1 = 25, MS2 = 25))
->>>>>>> master
     v
   }) 
 
@@ -52,11 +48,7 @@ setMethod(
     ## need to try for back support
     v <- try(RSQLite::dbGetQuery(object, "SELECT * FROM PPMTol;"), silent = TRUE)
     if (inherits(v, "try-error") || is.null(v))
-<<<<<<< HEAD
-      return(c(MS1 = 10, MS2 = 10))
-=======
       return(c(MS1 = 25, MS2 = 25))
->>>>>>> master
     structure(v$value, names = v$MSLevel)
   }) 
 
@@ -562,11 +554,8 @@ setMethod(
   getEICFromFeatureID,
   signature = signature(object = "prunedXcmsSet"), 
   definition = function(object, ID) { 
-<<<<<<< HEAD
-=======
     if (length(ID) > 1)
       return(NULL)
->>>>>>> master
     x <- object@EIC[[ID]]
     rownames(x) <- NULL
     x
@@ -578,11 +567,8 @@ setMethod(
   getEICFromFeatureID,
   signature = signature(object = "SQLiteConnection"), 
   definition = function(object, ID) { 
-<<<<<<< HEAD
-=======
     if (length(ID) > 1)
       return(NULL)
->>>>>>> master
     RSQLite::dbGetQuery(
       object, "SELECT rt,intensity,file FROM EIC where featureID == :x;", params = list(x = ID)
       )

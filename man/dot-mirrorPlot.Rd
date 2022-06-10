@@ -4,10 +4,6 @@
 \alias{.mirrorPlot}
 \title{internal function used by mirrorPlotModule}
 \usage{
-<<<<<<< HEAD
-.mirrorPlot(x, col, legend.peak.lower = "", legend.peak.upper = "",
-  highlight = NULL, xlim = NULL)
-=======
 .mirrorPlot(
   x,
   col,
@@ -16,7 +12,6 @@
   highlight = NULL,
   xlim = NULL
 )
->>>>>>> master
 }
 \arguments{
 \item{x}{data.frame with columne mz and intensity}

@@ -6,10 +6,6 @@
 \alias{initialize,xcmsFeatureSet-method}
 \title{xcmsFeatureSet S4 class that extends \code{"ExpressionSet"} class.}
 \usage{
-<<<<<<< HEAD
-\S4method{initialize}{xcmsFeatureSet}(.Object, intensity, masterPeak,
-  RTAdjustParam = NULL, peakGroupParam = NULL, ...)
-=======
 \S4method{initialize}{xcmsFeatureSet}(
   .Object,
   intensity,
@@ -18,7 +14,6 @@
   peakGroupParam = NULL,
   ...
 )
->>>>>>> master
 }
 \arguments{
 \item{.Object}{object}
