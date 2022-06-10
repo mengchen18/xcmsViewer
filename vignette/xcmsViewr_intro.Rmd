@@ -23,14 +23,14 @@ The xcmsViewer package provides a pipeline for analyzing and visualizing the
 mass spectrometry-based untargeted metabolomics data. It emphasizes the following features:
 
 * __A comprehensive pipeline from data preprocessing to statistical analysis__ 
-The pipeline (as shown in figure 1) includes data pre-processing using R/Bioconductor package [xcms](https://www.bioconductor.org/packages/release/bioc/html/xcms.html) 
+The pipeline (as shown in Figure 1) includes data pre-processing using R/Bioconductor package [xcms](https://www.bioconductor.org/packages/release/bioc/html/xcms.html) 
 (i.e. peak picking, retention time alignment, feature identification and quantification. 
 [here](https://www.bioconductor.org/packages/release/bioc/vignettes/xcms/inst/doc/xcms.html#5_Alignment) 
 is a tutorial.), feature annotation using public or in-house annotation database,
 statistical analysis using R and results visualization using [R/Shiny](https://shiny.rstudio.com/).
 
 <center>
-![(#fig:fig1) Figure 1: pipeline.](img/F1_workflow.png){width=75%}
+![Figure 1: The xcmsViewer data analysis pipeline.](img/F1_workflow.png){width=75%}
 </center>
 
 
@@ -132,10 +132,10 @@ a few unique features at _xcmsViewer_ (as compared to _omicsViewer_):
 * __Feature__ In this tab, every point is a feature, which are usually shown in 
 a two-dimensional space. Some of the features could be annotated
 with known metabolites. By default,
-the x-axis is retention time and the y-axis is the mass-to-charge ratio (figure 2).
+the x-axis is retention time and the y-axis is the mass-to-charge ratio (Figure 2).
 
 <center>
-![Figure 2: feature space 1.](img/F2_data_feature_rt_mz.png){width=75%}
+![Figure 2: Feature space defined by retention time (the x-axis) and mass (the y-axis).](img/F2_data_feature_rt_mz.png){width=75%}
 </center>
 
 We can also visualize features in other two-dimensional spaces defined by 
@@ -152,7 +152,7 @@ The selected feature will be shown in the __Feature table__ and sent to the righ
 panel for downstream analysis. 
 
 <center>
-![Figure 3: feature space 2.](img/F3_data_feature_volcano.png){width=75%}
+![Figure 3: Feature space defined by mean difference (x-axis) and log transformed p-values (y-axis).](img/F3_data_feature_volcano.png){width=75%}
 </center>
 
 When a single feature is selected from this tab or _Feature table_ tab, usually it 
