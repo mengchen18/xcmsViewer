@@ -136,7 +136,7 @@ setMethod(
     
     x <- object    
     fd <- fData(x@featureSet)    
-    fd$annot_m2 <- NA
+    fd$annot_ms2 <- NA
     ptol <- data.frame(
       MSLevel = c("MS1", "MS2"),
       value = c(ppmtol, ppmtol),

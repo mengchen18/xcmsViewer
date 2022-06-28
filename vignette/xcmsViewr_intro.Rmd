@@ -265,7 +265,7 @@ The experimental design _data.frame_ should contain at least two columns named "
 The next step is to process data to get an intensity matrix, where rows are features and columns are samples. The matrix values correlate with the features' abundance in each sample. The processing consists of three steps, i.e., peak identification, alignment, and correspondence, defined in the R/Bioconductor package [xcms](https://www.bioconductor.org/packages/release/bioc/html/xcms.html). To know more information about the workflow, please refer to [here](https://www.bioconductor.org/packages/release/bioc/vignettes/xcms/inst/doc/xcms-lcms-ms.html). 
 
 ```{r preprocessing, eval=FALSE}
-# feature identifiction and quantification
+# feature identification and quantification
 res <- runPrunedXcmsSet(
   files = pd$file, # path to the files
   pheno = pd, # phenotype data
