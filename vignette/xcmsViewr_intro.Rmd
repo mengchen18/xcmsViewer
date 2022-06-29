@@ -269,7 +269,7 @@ The next step is to process data to get an intensity matrix, where rows are feat
 res <- runPrunedXcmsSet(
   files = pd$file, # path to the files
   pheno = pd, # phenotype data
-  tmpdir = "Rds/temp", # folder to store temporary files, needs to be an emppty folder or not existing then a new folder will be created
+  tmpdir = "Rds/temp", # folder to store temporary files, needs to be an empty folder or not existing then a new folder will be created
   postfilterParam = list(
     postfilter = c(5, 3000), # at least 5 peaks has intensity higher than 3000
     ms1.noise = 100, # ms1 spectrum, intensity lower than this will be considered as noise

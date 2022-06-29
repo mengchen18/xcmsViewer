@@ -1,8 +1,8 @@
 Package: xcmsViewer
 Type: Package
 Title: Comprehensive data analysis pipeline for untargeted LC-MS(/MS) based metabolomics experiment
-Version: 0.5.4
-Date: 2022-06-10
+Version: 0.5.7
+Date: 2022-06-28
 Author: Chen Meng
 Maintainer: Chen Meng <mengchen18@gmail.com>
 Description: Converting MSnExp object to simple table format, including meta table and intensity. Identified features will be annotated if annotation information (monoisotopic mass and MS2 spectra) is given. The output is ready to be visualized using xcmsViewer application.

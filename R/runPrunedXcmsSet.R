@@ -31,7 +31,10 @@ chromPeaksMS2 <- function(x, mtab_files, fun_parallel = parallel::mclapply, ...)
       paste(mtab$ID[ic], collapse = ";")
     }, ...)
   })
-  cpeaks$ms2Scan <- unlist(l)
+  v <- character(nrow(cpeaks))
+  for (fromFile in unique(cpeaks$sample))
+    v[cpeaks$sample == fromFile] <- unlist(l[[fromFile]])
+  cpeaks$ms2Scan <- v
   cpeaks
 }
 
@@ -404,6 +407,7 @@ runPrunedXcmsSet <- function(
     if (i %% 100 == 0)
       print(paste(i, nrow(fd)), sep = "/")
     pk <- peaks[feat$peakidx[[i]], ]
+    pk <- pk[!pk$is_filled, ]
     unlist(strsplit(pk$ms2Scan, ";"))
     v <- obj_xcmsScan@intensity$ID %fin% unlist(strsplit(pk$ms2Scan, ";"))
     v <- obj_xcmsScan@intensity[v, ]
