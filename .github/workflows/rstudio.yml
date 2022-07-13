@@ -36,7 +36,7 @@ jobs:
       uses: docker/build-push-action@v2
       with:
         context: .
-        file: ./inst/extdata/Dockerfile/Dockerfile_rstudio
+        file: ./inst/extdata/Dockerfile_rstudio
         push: true
         tags: mengchen18/xcmsviewer_rstudio:${{ env.packageVersion }}
     
