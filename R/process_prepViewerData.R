@@ -120,7 +120,6 @@ pca <- function(x, n = 6, prefix = "", fillNA = TRUE, samples = NULL) {
 #' @param x the expression matrix
 #' @param pheno the phenotype data.frame
 #' @param compare A named list object tells how the PCA should be performed. 
-#' @param fillNA logical
 #'   for example:
 #'   list(subsetName1 = c("phenotypeHeader1", "value1", "value2", "value3"),
 #'        subsetName2 = c("phenotypeHeader2", "cat1", "cat2"))
@@ -129,9 +128,11 @@ pca <- function(x, n = 6, prefix = "", fillNA = TRUE, samples = NULL) {
 #'   samples in "phenotypeHeader2" column of phenotype mapped to 
 #'   cat1 and cat2 will be included in the PCA, as a separate PCA.
 #' @param n number of components to include
+#' @param fillNA logical
+#' @param prefix the prefix used in the header for columns of PCA results
 #' @importFrom matrixStats rowVars
 #' 
-multi.pca <- function(x, pheno, compare = list("_all_" = TRUE), n = 6, fillNA = TRUE) {
+multi.pca <- function(x, pheno, compare = list("_all_" = TRUE), n = 6, fillNA = TRUE, prefix = "PCA") {
   
   cn <- setdiff(setdiff(sapply(compare, "[", 1), TRUE), c("_all_", colnames(pheno)))
   if (length(cn) > 0)
@@ -142,13 +143,13 @@ multi.pca <- function(x, pheno, compare = list("_all_" = TRUE), n = 6, fillNA = 
   
   t <- lapply(names(compare), function(i) {
     if (i == "_all_") {
-      v <- pca(x, n = n, prefix = "PCA|All", fillNA = fillNA)
+      v <- pca(x, n = n, prefix = paste(prefix, "All_samples", sep = "|"), fillNA = fillNA)
     } else {
       ph <- pheno[[compare[[i]][1]]]
       sd <- setdiff(compare[[i]][-1], ph)
       if (length(sd) > 0)
         stop(sprintf("Column '%s' in 'pheno' do not contain these vaues: %s", i, paste(sd, collapse = ", ")))      
-      v <- pca(x, n = n, prefix = paste(c("PCA", i), collapse = "|"), samples = which(ph %in% compare[[i]][-1]), fillNA = fillNA)
+      v <- pca(x, n = n, prefix = paste(c(prefix, i), collapse = "|"), samples = which(ph %in% compare[[i]][-1]), fillNA = fillNA)
     }
     v
   })
@@ -161,7 +162,7 @@ multi.pca <- function(x, pheno, compare = list("_all_" = TRUE), n = 6, fillNA = 
   )
 }
 
-#' Function to perform multiple PCA
+#' Perform basic statistical analyses and preppare object to be visualized using xcmsViewer app
 #' @description the PCA result is ready to be included in the prunedXcmsSet
 #' @param object the prunedXcmsSet object
 #' @param pheno the phenotype data.frame, could be NULL, which means pData from object will be used. 
@@ -183,7 +184,8 @@ multi.pca <- function(x, pheno, compare = list("_all_" = TRUE), n = 6, fillNA = 
 prepViewerData <- function(
   object, pheno = NULL, median.center = FALSE, fillNA = TRUE,
   compare.t.test = NULL, compare.pca = list("_all_" = TRUE), nf = 6, ...,
-  fx = "General|All|rtmed", fy = "General|All|mzmed", sx = "PCA|All|PC1 (", sy = "PCA|All|PC2 ("
+  fx = "General|All|rtmed", fy = "General|All|mzmed", 
+  sx = "PCA_filled|All_samples|PC1 (", sy = "PCA_filled|All_samples|PC2 ("
   ) {
   
   # phenotype data
@@ -223,7 +225,12 @@ prepViewerData <- function(
   
   ######## PCA #######
   
-  pc <- multi.pca(expr, pheno = pd, compare = compare.pca, n = min(nrow(pd), nf), fillNA = fillNA)
+  pc_f <- multi.pca(expr, pheno = pd, compare = compare.pca, n = min(nrow(pd), nf), fillNA = TRUE, prefix = "PCA_filled")
+  pc_nf <- multi.pca(expr, pheno = pd, compare = compare.pca, n = min(nrow(pd), nf), fillNA = FALSE, prefix = "PCA_nofill")
+  pc <- list(
+    samples = cbind(pc_f$samples, pc_nf$samples),
+    features = cbind(pc_f$features, pc_nf$features)
+    )
   
   if (!is.null(pc$features) && nrow(pc$features) == nrow(fdx))
     fd <- cbind(fdx, pc$features) else

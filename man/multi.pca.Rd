@@ -4,18 +4,21 @@
 \alias{multi.pca}
 \title{Function to perform multiple PCA}
 \usage{
-multi.pca(x, pheno, compare = list(`_all_` = TRUE), n = 6, fillNA = TRUE)
+multi.pca(
+  x,
+  pheno,
+  compare = list(`_all_` = TRUE),
+  n = 6,
+  fillNA = TRUE,
+  prefix = "PCA"
+)
 }
 \arguments{
 \item{x}{the expression matrix}
 
 \item{pheno}{the phenotype data.frame}
 
-\item{compare}{A named list object tells how the PCA should be performed.}
-
-\item{n}{number of components to include}
-
-\item{fillNA}{logical
+\item{compare}{A named list object tells how the PCA should be performed. 
 for example:
 list(subsetName1 = c("phenotypeHeader1", "value1", "value2", "value3"),
      subsetName2 = c("phenotypeHeader2", "cat1", "cat2"))
@@ -23,6 +26,12 @@ indicate the samples in "phenotypeHeader1" column of phenotype mapped to
 value1, value2 and value3 will be included in the PCA. Similarly, the 
 samples in "phenotypeHeader2" column of phenotype mapped to 
 cat1 and cat2 will be included in the PCA, as a separate PCA.}
+
+\item{n}{number of components to include}
+
+\item{fillNA}{logical}
+
+\item{prefix}{the prefix used in the header for columns of PCA results}
 }
 \description{
 the PCA result is ready to be included in the prunedXcmsSet

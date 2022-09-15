@@ -2,7 +2,7 @@
 % Please edit documentation in R/process_prepViewerData.R
 \name{prepViewerData}
 \alias{prepViewerData}
-\title{Function to perform multiple PCA}
+\title{Perform basic statistical analyses and preppare object to be visualized using xcmsViewer app}
 \usage{
 prepViewerData(
   object,
@@ -15,8 +15,8 @@ prepViewerData(
   ...,
   fx = "General|All|rtmed",
   fy = "General|All|mzmed",
-  sx = "PCA|All|PC1 (",
-  sy = "PCA|All|PC2 ("
+  sx = "PCA_filled|All_samples|PC1 (",
+  sy = "PCA_filled|All_samples|PC2 ("
 )
 }
 \arguments{
