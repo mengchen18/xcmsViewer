@@ -16,7 +16,7 @@ runPrunedXcmsSet(
   RTAdjustParam = PeakGroupsParam(minFraction = 0.25, extraPeaks = 1, smooth = "loess",
     span = 0.5, family = "gaussian", peakGroupsMatrix = matrix(nrow = 0, ncol = 0),
     subset = integer(), subsetAdjust = c("average", "previous")),
-  peakGroupParam = PeakDensityParam(rep(1, length(files))),
+  peakGroupParam = PeakDensityParam(seq_len(length(files))),
   fillMissing = FALSE,
   mode = c("pos", "neg")[1],
   ref = NULL,

@@ -181,9 +181,14 @@ setMethod(
       if (!identical(colnames(df), name))
         return(sprintf("Problem in %s column name!", str))
     }
-    if (!missing(class))
-      if (!all( sapply(df, class) == class))
+    if (!missing(class)) {
+      ii <- sapply(seq_along(name), function(x) {
+        inherits(df[[x]], c(class[x], "AsIs"))
+        })
+      # if (!all( sapply(df, class) == class))
+      if (!all( ii ))      
         return(sprintf("Problem in %s column class!", str))
+    }
   }
 }
 

@@ -156,6 +156,8 @@ multi.pca <- function(x, pheno, compare = list("_all_" = TRUE), n = 6, fillNA = 
   if (is.null(t))
     return(NULL)
 
+  t <- t[!sapply(t, is.null)]
+
   list(
     samples = data.frame(do.call(cbind, lapply(t, "[[", "samples")), stringsAsFactors = FALSE, check.names = FALSE),
     features = data.frame(do.call(cbind, lapply(t, "[[", "features")), stringsAsFactors = FALSE, check.names = FALSE)
@@ -227,10 +229,22 @@ prepViewerData <- function(
   
   pc_f <- multi.pca(expr, pheno = pd, compare = compare.pca, n = min(nrow(pd), nf), fillNA = TRUE, prefix = "PCA_filled")
   pc_nf <- multi.pca(expr, pheno = pd, compare = compare.pca, n = min(nrow(pd), nf), fillNA = FALSE, prefix = "PCA_nofill")
+  
+  sample_list <- list(pc_f$samples, pc_nf$samples)
+  sample_list <- sample_list[!sapply(sample_list, function(x) is.null(x) || nrow(x) == 0)]
+
+  feature_list <- list(pc_f$features, pc_nf$features)
+  feature_list <- feature_list[!sapply(feature_list, function(x) is.null(x) || nrow(x) == 0)]
+
   pc <- list(
-    samples = cbind(pc_f$samples, pc_nf$samples),
-    features = cbind(pc_f$features, pc_nf$features)
+    samples = do.call(cbind, sample_list),
+    features = do.call(cbind, feature_list)
     )
+
+  # pc <- list(
+  #   samples = cbind(pc_f$samples, pc_nf$samples),
+  #   features = cbind(pc_f$features, pc_nf$features)
+  #   )
   
   if (!is.null(pc$features) && nrow(pc$features) == nrow(fdx))
     fd <- cbind(fdx, pc$features) else

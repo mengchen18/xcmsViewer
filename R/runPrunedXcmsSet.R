@@ -161,7 +161,6 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
       rtmin = min(x$rt),
       rtmax = max(x$rt),
       npeaks = nrow(x),
-      X1 = length(unique(x$sample)),
       stringsAsFactors = FALSE
     )
     df$peakidx <- list(x$idx)
@@ -178,9 +177,11 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
   }
   
   tt <- lapply(1:nrow(fd), function(i) {
+
+    cc <- c("mzmed", "mzmin" ,"mzmax" ,"rtmed", "rtmin" , "rtmax", "npeaks", "peakidx")
     ii <- fd$peakidx[[i]]
     if (length(ii) == 1)
-      return(fd[i, ]) 
+      return(fd[i, cc]) 
     
     tab <- cpd[ii, ]
     nrange <- 3
@@ -195,13 +196,13 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
         splitMore <- TRUE
       } else
         splitMore  <- FALSE
-    }
+    }    
     
     if (length(unique(sl)) == 1)
-      return(fd[i, ]) 
+      return(fd[i, cc]) 
     
-    st <- split(tab, sl)
-    p <- lapply(st, writeFeature, what = colnames(fd))
+    st <- split(tab, sl)    
+    p <- lapply(st, writeFeature, what = cc)
     do.call(rbind, p)
   })
   tq <- do.call(rbind, tt)
@@ -279,7 +280,7 @@ runPrunedXcmsSet <- function(
     peakGroupsMatrix = matrix(nrow = 0, ncol = 0),
     subset = integer(),
     subsetAdjust = c("average", "previous")), 
-  peakGroupParam = PeakDensityParam(rep(1, length(files))),
+  peakGroupParam = PeakDensityParam(seq_len(length(files))),
   
   fillMissing = FALSE,
   
