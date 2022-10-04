@@ -245,7 +245,7 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
 #' @param ppmtol the mass tolerence given by parts per million (PPM)
 #' @param mclapplyParam the parallel function, could be \code{mclapply} or \code{bplapply}, used in peak picking and annotation
 #' @param bplapplyParam the parameters passed to biocparallel biolapply, only use if fillmising is TRUE
-#' @param peakPikcingObj object save after the peak picking step, usually in "04_object_PeakPicking.RDS". If this is give the peak 
+#' @param peakPickingObj object save after the peak picking step, usually in "04_object_PeakPicking.RDS". If this is give the peak 
 #'   picking step will be ignored.
 #' @import parallel
 #' @import BiocParallel
@@ -292,7 +292,7 @@ runPrunedXcmsSet <- function(
   # parallel
   mclapplyParam = list(fun_parallel = mclapply, mc.cores = 1),
   bplapplyParam = MulticoreParam(workers = 1),
-  peakPikcingObj = NULL
+  peakPickingObj = NULL
 ) {
   
   if (!is.null(pheno))
@@ -300,11 +300,11 @@ runPrunedXcmsSet <- function(
       stop("length(files) != nrow(pheno)!")
   
   # peakPicking and filter
-  if (is.null(peakPikcingObj)) {
+  if (is.null(peakPickingObj)) {
     pp <- peakPicking( files = files, param = peakPickingParam, tmpdir=tmpdir, postfilterParam = postfilterParam )
     saveRDS(pp, file = file.path(tmpdir, "04_object_PeakPicking.RDS"))
   } else
-    pp <- peakPikcingObj  
+    pp <- peakPickingObj  
   
   # feature identification, the RT will also be identified
   df <- defineFeatures(

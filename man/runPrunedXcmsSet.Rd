@@ -23,7 +23,7 @@ runPrunedXcmsSet(
   ppmtol = 25,
   mclapplyParam = list(fun_parallel = mclapply, mc.cores = 1),
   bplapplyParam = MulticoreParam(workers = 1),
-  peakPikcingObj = NULL
+  peakPickingObj = NULL
 )
 }
 \arguments{
@@ -56,7 +56,7 @@ list all the files passed to the function}
 
 \item{bplapplyParam}{the parameters passed to biocparallel biolapply, only use if fillmising is TRUE}
 
-\item{peakPikcingObj}{object save after the peak picking step, usually in "04_object_PeakPicking.RDS". If this is give the peak 
+\item{peakPickingObj}{object save after the peak picking step, usually in "04_object_PeakPicking.RDS". If this is give the peak 
 picking step will be ignored.}
 }
 \value{
