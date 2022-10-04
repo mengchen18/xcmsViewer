@@ -1,5 +1,5 @@
 #' post filter of chromPeaks
-#' @param x An XCMSnExp object afater peak calling
+#' @param x An XCMSnExp object after peak calling
 #' @param postfilter = c(5, 500), 
 #' @param ms1.noise passed to \link{asIntensityTable}
 #' @param ms1.maxPeaks passed to \link{asIntensityTable}

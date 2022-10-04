@@ -1,5 +1,5 @@
 #' mapping ms2 chromPeaksMS2
-#' @param x the MSnExp oject
+#' @param x the MSnExp object
 #' @param mtab_files paths of meta table, often returned by function \code{peakPicking }
 #' @param fun_parallel the parallel function, could be \code{mclapply} or \code{bplapply}
 #' @param ... the parameters passed to parallel function
