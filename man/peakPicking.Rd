@@ -8,9 +8,10 @@ peakPicking(
   files,
   param,
   tmpdir = "xcmsViewerTemp",
-  postfilterParam = list(postfilter = c(5, 1000), ms1.noise = 100, ms1.maxPeaks = Inf,
-    ms1.maxIdenticalInt = 20, ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt =
-    6, BPPARAM = bpparam())
+  postfilter = c(5, 1000),
+  noisefilter = list(ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
+    ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6),
+  BPPARAM = bpparam()
 )
 }
 \arguments{
@@ -20,7 +21,11 @@ peakPicking(
 
 \item{tmpdir}{the temporary directory to store the processed results}
 
-\item{postfilterParam}{passed to \code{chromPeaksPostFilter}}
+\item{postfilter}{passed to \code{chromPeaksPostFilter}}
+
+\item{noisefilter}{a list, passed to \code{getMetaIntensityTable}}
+
+\item{BPPARAM}{arguments passed to chromPeaksPostFilter, which further pass the argument to bplapply}
 }
 \value{
 it returns a list of three elements:

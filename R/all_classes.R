@@ -12,20 +12,20 @@
     # xcmsScan
     xcmsScan_meta_column = c(
       "scanNum", "acquisitionNum", "rt", "tic", "peakCount", "msLevel", "fromFile", 
-      "precScanNum", "precMz", "precCharge", "precIntensity", "ID"),
+      "precScanNum", "precMz", "precCharge", "precIntensity", "ID", "peakCountFiltered", "validMS2"),
     xcmsScan_meta_column_class = c(
       "integer", "integer", "numeric", "numeric", "integer", "integer", "integer", 
-      "integer", "numeric", "integer", "numeric", "character"),
+      "integer", "numeric", "integer", "numeric", "character", "integer", "logical"),
     xcmsScan_intensity_column = c("mz", "intensity", "ID"),
     xcmsScan_intensity_column_class = c("numeric", "numeric", "character"),
     
     # xcmsPeak
     xcmsPeak_table_column = c(
       "ID", "sample", "masterPeak", "into", "mz", "mzmin", 
-      "mzmax", "rt", "rtmin", "rtmax", "sn", "is_filled", "ms_level", "ms2Scan" ),
+      "mzmax", "rt", "rtmin", "rtmax", "sn", "is_filled", "ms_level", "ms2Scan", "validMS2" ),
     xcmsPeak_table_column_class = c(
       "character", "integer", "character", "numeric", "numeric", "numeric", 
-      "numeric", "numeric", "numeric", "numeric", "numeric", "logical", "integer", "character"),
+      "numeric", "numeric", "numeric", "numeric", "numeric", "logical", "integer", "character", "logical"),
     
     # xcmsAnnot
     xcmsAnnot_column = c("ID", "InChIKey", "CID", "cpdName", "formula", "monoMass", "Adduct", 

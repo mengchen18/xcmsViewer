@@ -8,9 +8,9 @@ runPrunedXcmsSet(
   files,
   peakPickingParam = MatchedFilterParam(fwhm = 7.5),
   tmpdir = "xcmsViewerTemp",
-  postfilterParam = list(postfilter = c(5, 1000), ms1.noise = 100, ms1.maxPeaks = Inf,
-    ms1.maxIdenticalInt = 20, ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt =
-    6, BPPARAM = bpparam()),
+  postfilter = c(5, 1000),
+  noisefilter = c(ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
+    ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, BPPARAM = bpparam()),
   keepMS1 = TRUE,
   pheno = NULL,
   RTAdjustParam = PeakGroupsParam(minFraction = 0.25, extraPeaks = 1, smooth = "loess",
@@ -33,7 +33,9 @@ runPrunedXcmsSet(
 
 \item{tmpdir}{directory for temporary files}
 
-\item{postfilterParam}{post filter params to filter identified peaks, passed to \code{\link{chromPeaksPostFilter}}}
+\item{postfilter}{post filter params to filter identified peaks, passed to \code{\link{chromPeaksPostFilter}}}
+
+\item{noisefilter}{passed to \code{getMetaIntensityTable}}
 
 \item{keepMS1}{logical value. If the MS1 intensities should be kept.}
 
@@ -54,7 +56,7 @@ list all the files passed to the function}
 
 \item{mclapplyParam}{the parallel function, could be \code{mclapply} or \code{bplapply}, used in peak picking and annotation}
 
-\item{bplapplyParam}{the parameters passed to biocparallel biolapply, only use if fillmising is TRUE}
+\item{bplapplyParam}{the parameters passed to biocparallel biolapply}
 
 \item{peakPickingObj}{object save after the peak picking step, usually in "04_object_PeakPicking.RDS". If this is give the peak 
 picking step will be ignored.}

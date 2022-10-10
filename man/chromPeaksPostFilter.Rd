@@ -6,34 +6,22 @@
 \usage{
 chromPeaksPostFilter(
   x,
+  mtab,
+  itab,
   postfilter = c(5, 500),
-  ms1.noise = 100,
-  ms1.maxPeaks = Inf,
-  ms1.maxIdenticalInt = 20,
-  ms2.noise = 30,
-  ms2.maxPeaks = 100,
-  ms2.maxIdenticalInt = 6,
-  ...
+  BPPARAM = bpparam()
 )
 }
 \arguments{
-\item{x}{An XCMSnExp object afater peak calling}
+\item{x}{An XCMSnExp object after peak calling}
 
-\item{postfilter}{= c(5, 500),}
+\item{mtab}{scan meta table returned by \link{asMetaTable}}
 
-\item{ms1.noise}{passed to \link{asIntensityTable}}
+\item{itab}{intensity table returned by \link{asIntensityTable}}
 
-\item{ms1.maxPeaks}{passed to \link{asIntensityTable}}
+\item{postfilter}{a numeric vector of length 2, in for mat c(x, y), meaning at least x peaks with intensity higher than y.}
 
-\item{ms1.maxIdenticalInt}{passed to \link{asIntensityTable}}
-
-\item{ms2.noise}{passed to \link{asIntensityTable}}
-
-\item{ms2.maxPeaks}{passed to \link{asIntensityTable}}
-
-\item{ms2.maxIdenticalInt}{passed to \link{asIntensityTable}}
-
-\item{...}{arguments passed bplapply}
+\item{BPPARAM}{arguments passed to bplapply}
 }
 \description{
 post filter of chromPeaks

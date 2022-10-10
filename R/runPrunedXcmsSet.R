@@ -12,14 +12,11 @@ chromPeaksMS2 <- function(x, mtab_files, fun_parallel = parallel::mclapply, ...)
   if (!inherits(x, "MSnExp"))
     stop("x should be an object of class MSnExp!")
   
-  cpeaks <- xcms::chromPeaks(x)
-  cpeaks <- as.data.frame(cpeaks)
-  
+  cpeaks <- xcms::chromPeaks(x)  
   cat("Mapping MS2 spectra ...\n")
-  t0 <- max(cpeaks$sample)
-  l <- lapply(unique(cpeaks$sample), function(fromFile) {
-    print(sprintf("%s/%s", fromFile, t0))
-    cpsub <- cpeaks[cpeaks$sample == fromFile, ]
+  t0 <- max(cpeaks[, "sample"])
+  l <- lapply(unique(cpeaks[, "sample"]), function(fromFile) {
+    cpsub <- cpeaks[cpeaks[, "sample"] == fromFile, ]
     mtab <- readRDS(mtab_files[fromFile])
     mtab <- mtab[mtab$msLevel > 1, ]
     fun_parallel(1:nrow(cpsub), function(i) {
@@ -28,14 +25,20 @@ chromPeaksMS2 <- function(x, mtab_files, fun_parallel = parallel::mclapply, ...)
         dplyr::between(mtab[["rt"]], c1[["rtmin"]], c1[["rtmax"]] ) & 
           dplyr::between(mtab$precMz, c1[["mzmin"]], c1[["mzmax"]])
       )
-      paste(mtab$ID[ic], collapse = ";")
+      list(paste(mtab$ID[ic], collapse = ";"), any(mtab$validMS2[ic]))
     }, ...)
   })
   v <- character(nrow(cpeaks))
-  for (fromFile in unique(cpeaks$sample))
-    v[cpeaks$sample == fromFile] <- unlist(l[[fromFile]])
-  cpeaks$ms2Scan <- v
-  cpeaks
+  vms2 <- rep(FALSE, nrow(cpeaks))
+  for (fromFile in unique(cpeaks[, "sample"])) {
+    i0 <- cpeaks[, "sample"] == fromFile
+    v[i0] <- sapply(l[[fromFile]], "[[", 1)
+    vms2[i0] <- sapply(l[[fromFile]], "[[", 2)
+  }
+  data.frame(
+    ms2Scan = v,
+    validMS2 = vms2
+    )
 }
 
 
@@ -45,7 +48,9 @@ chromPeaksMS2 <- function(x, mtab_files, fun_parallel = parallel::mclapply, ...)
 #' @param files a character vector stores the the mzXML or mzML files
 #' @param param peak picking parameters, passed to \code{findChromPeaks}
 #' @param tmpdir the temporary directory to store the processed results
-#' @param postfilterParam passed to \code{chromPeaksPostFilter}
+#' @param postfilter passed to \code{chromPeaksPostFilter}
+#' @param noisefilter a list, passed to \code{getMetaIntensityTable}
+#' @param BPPARAM arguments passed to chromPeaksPostFilter, which further pass the argument to bplapply
 #' @return it returns a list of three elements:
 #'  1. itab = file paths of intensity tables
 #'  2. mtab = file  paths of the meta tables
@@ -55,11 +60,11 @@ chromPeaksMS2 <- function(x, mtab_files, fun_parallel = parallel::mclapply, ...)
 #' 
 peakPicking <- function(
   files, param, tmpdir="xcmsViewerTemp",  
-  postfilterParam = list(
-    postfilter = c(5, 1000), 
+  postfilter = c(5, 1000),
+  noisefilter = list(
     ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
-    ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, 
-    BPPARAM=bpparam())
+    ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6),
+  BPPARAM=bpparam()
 ) {
   
   # creating temp dirs 
@@ -94,35 +99,42 @@ peakPicking <- function(
     
     d1 <- MSnbase::readMSData(f1, mode = "onDisk")
     xdata <- xcms::findChromPeaks( d1, param = param, msLevel = 1L)
-    postfilterParam$x <- xdata
-    xdata <- do.call(chromPeaksPostFilter, args = postfilterParam)
+    noisefilter$x <- xdata
+    mitab <- do.call(getMetaIntensityTable, noisefilter)
     
-    itab <- xdata$itable
+    itab <- mitab$itab
     itab$ID <- sub("^F1.", fid, itab$ID)
     saveRDS(itab, file = file.path(dir_itab, f1b))
     file_itab <- c( file_itab, file.path(dir_itab, f1b) )
     
-    mtab <- xdata$mtable
+    mtab <- mitab$mtab
     mtab$fromFile <- loop
     mtab$ID <- sub("F1.", fid, mtab$ID)
     saveRDS(mtab, file = file.path(dir_mtab, f1b))
     file_mtab <- c( file_mtab, file.path(dir_mtab, f1b) )
-    
-    saveRDS(xdata$XCMSnExp, file = file.path(dir_peak, f1b))
+
+    # add peaks MS2
+    pks_ms2 <- chromPeaksMS2( x = xdata, mtab_files = file_mtab[loop] )
+    attr(xdata, "chromPeakMS2") <- pks_ms2
+    xdata <- chromPeaksPostFilter(
+      x = xdata, itab = itab, mtab = mtab, postfilter = postfilter, BPPARAM = BPPARAM 
+      )
+
+    saveRDS(xdata, file = file.path(dir_peak, f1b))
     file_XCMSnExp <- c( file_XCMSnExp, file.path(dir_peak, f1b) )
   }
   
-  flt <- postfilterParam
-  flt$x <- NULL
-  flt$postfilter <- NULL
-  flt$BPPARAM <- NULL
+  # flt <- list(postfilter = postfilter, noisefilter = noisefilter)
+  # flt$x <- NULL
+  # flt$postfilter <- NULL
+  # flt$BPPARAM <- NULL
   
   list(itab = file_itab, 
        mtab = file_mtab, 
        XCMSnExp = file_XCMSnExp, 
-       xcmsScanFilter = flt, 
+       xcmsScanFilter = noisefilter, 
        peakPickingParam = param, 
-       postFilter = postfilterParam$postfilter)
+       postFilter = postfilter)
 }
 
 #' define features for individual pipeline 
@@ -150,7 +162,12 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
   fd <- fd[, setdiff(colnames(fd), "ms_level"), drop = FALSE]
   fd <- as.data.frame(fd)
   cpd <- as.data.frame(chromPeaks(xdata))
+  cpms2 <- lapply(exps, attr, "chromPeakMS2")
+  cpms2 <- do.call(rbind, cpms2)
+  if (nrow(cpms2) > 0)
+    cpd <- cbind(cpd, cpms2)
   cpd$idx <- 1:nrow(cpd)
+  chromPeaks(xdata) <- cpd
   
   writeFeature <- function(x, what) {
     df <- data.frame(
@@ -233,7 +250,8 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
 #' @param files mzXML/mzML files
 #' @param peakPickingParam methods passed to \code{\link[xcms]{findChromPeaks}}
 #' @param tmpdir directory for temporary files
-#' @param postfilterParam post filter params to filter identified peaks, passed to \code{\link{chromPeaksPostFilter}}
+#' @param postfilter post filter params to filter identified peaks, passed to \code{\link{chromPeaksPostFilter}}
+#' @param noisefilter passed to \code{getMetaIntensityTable}
 #' @param keepMS1 logical value. If the MS1 intensities should be kept.
 #' @param pheno phenotype data. It should be a data.frame with at least one column named as "file" to 
 #'   list all the files passed to the function
@@ -244,7 +262,7 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
 #' @param ref MS1 and MS2 annotation data
 #' @param ppmtol the mass tolerence given by parts per million (PPM)
 #' @param mclapplyParam the parallel function, could be \code{mclapply} or \code{bplapply}, used in peak picking and annotation
-#' @param bplapplyParam the parameters passed to biocparallel biolapply, only use if fillmising is TRUE
+#' @param bplapplyParam the parameters passed to biocparallel biolapply
 #' @param peakPickingObj object save after the peak picking step, usually in "04_object_PeakPicking.RDS". If this is give the peak 
 #'   picking step will be ignored.
 #' @import parallel
@@ -259,8 +277,8 @@ runPrunedXcmsSet <- function(
   files, 
   peakPickingParam = MatchedFilterParam(fwhm = 7.5), 
   tmpdir="xcmsViewerTemp",  
-  postfilterParam = list(
-    postfilter = c(5, 1000), 
+  postfilter = c(5, 1000), 
+  noisefilter = c(
     ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
     ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, 
     BPPARAM=bpparam()),
@@ -301,7 +319,11 @@ runPrunedXcmsSet <- function(
   
   # peakPicking and filter
   if (is.null(peakPickingObj)) {
-    pp <- peakPicking( files = files, param = peakPickingParam, tmpdir=tmpdir, postfilterParam = postfilterParam )
+    pp <- peakPicking( 
+      files = files, param = peakPickingParam, tmpdir=tmpdir, 
+      noisefilter = noisefilter , postfilter = postfilter, BPPARAM = bplapplyParam
+      )
+    
     saveRDS(pp, file = file.path(tmpdir, "04_object_PeakPicking.RDS"))
   } else
     pp <- peakPickingObj  
@@ -316,21 +338,8 @@ runPrunedXcmsSet <- function(
     df <- fillChromPeaks(df, msLevel = 1L, BPPARAM = bplapplyParam)
   } 
 
-  # itable <- do.call(rbind, lapply(pp$itab, readRDS))
-  # mtable <- do.call(rbind, lapply(pp$mtab, readRDS))
-  # if (!keepMS1) {
-  #   cat("    Scan cleaning ...\n")
-  #   mtable <- mtable[which(mtable$msLevel > 1), ]
-  #   itable <- itable[itable$ID %in% mtable$ID, ]    
-  # }
-  # obj_xcmsScan <- new("xcmsScan", meta = mtable, intensity = itable, filter = pp$xcmsScanFilter, keepMS1 = TRUE)  
-
   cat("Extracting extended chrom peaks ...\n")
-  cpms2param <- mclapplyParam
-  cpms2param$mtab_files <- pp$mtab
-  cpms2param$x <- df
-  
-  peaks <- do.call(chromPeaksMS2, cpms2param)
+  peaks <- chromPeaks(df)
   peaks$ID <- rownames(peaks)
   peaks$is_filled <- chromPeakData(df)$is_filled
   peaks$ms_level <- chromPeakData(df)$ms_level
@@ -375,32 +384,6 @@ runPrunedXcmsSet <- function(
     })
   names(eicList) <- fd$ID
   obj_xcmsScan <- new("xcmsScan", meta = mtable, intensity = itable, filter = pp$xcmsScanFilter, keepMS1 = TRUE)  
-
-  # # EICs
-  # cat("Extract feature EICs ...\n")
-  # getEICInd <- function(obj) {    
-  #   lsc <- lapply(1:length(obj$itab), function(i) {
-  #     print(paste(i, length(obj$itab), sep = "/"))
-  #     scanList <- list(
-  #       scanMeta = readRDS(obj$mtab[i]), 
-  #       scanIntensity = readRDS(obj$itab[i])
-  #     )
-  #     eicList <- mclapplyParam$fun_parallel(1:nrow(fd), function(i) {
-  #       f <- fd[i, ]
-  #       mzoff <- 20 * 1e-06 * f$mzmed
-  #       getEIC2(scanList, rt = c(f$rtmin - 30, f$rtmax + 30), 
-  #               mz = c(f$mzmin - mzoff, f$mzmax + mzoff), na.rm = TRUE)
-  #     }, mc.cores = mclapplyParam$mc.cores)
-  #     names(eicList) <- fd$ID
-  #     eicList
-  #   })
-  #   el <- lapply(fd$ID, function(x) {
-  #     do.call(rbind, lapply(lsc, "[[", x))
-  #   })
-  #   names(el) <- fd$ID
-  #   el
-  # }
-  # eicList <- getEICInd(pp)
   
   ##### add consensus spectra #####
   cat("Extracting consensus spectra ...\n")
@@ -450,7 +433,8 @@ runPrunedXcmsSet <- function(
   
   peaks$masterPeak <- ""
   peaks$masterPeak[fastmatch::"%fin%"(peaks$ID, masterPeak)] <- "+"
-  
+  if (is.numeric(peaks$validMS2))
+    peaks$validMS2 <- as.logical(peaks$validMS2)
   obj_xcmsPeak <- new("xcmsPeak", 
                       table = peaks[, .xcmsViewerInternalObjects()$xcmsPeak_table_column],
                       param = pp$peakPickingParam,
