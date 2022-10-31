@@ -12,6 +12,7 @@ runPrunedXcmsSet(
   noisefilter = c(ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
     ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, BPPARAM = bpparam()),
   keepMS1 = TRUE,
+  keepEIC = TRUE,
   pheno = NULL,
   RTAdjustParam = PeakGroupsParam(minFraction = 0.25, extraPeaks = 1, smooth = "loess",
     span = 0.5, family = "gaussian", peakGroupsMatrix = matrix(nrow = 0, ncol = 0),
@@ -38,6 +39,8 @@ runPrunedXcmsSet(
 \item{noisefilter}{passed to \code{getMetaIntensityTable}}
 
 \item{keepMS1}{logical value. If the MS1 intensities should be kept.}
+
+\item{keepEIC}{logical value. If the extract ion chromatogram (EIC) should be kept.}
 
 \item{pheno}{phenotype data. It should be a data.frame with at least one column named as "file" to 
 list all the files passed to the function}

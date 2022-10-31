@@ -253,6 +253,7 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
 #' @param postfilter post filter params to filter identified peaks, passed to \code{\link{chromPeaksPostFilter}}
 #' @param noisefilter passed to \code{getMetaIntensityTable}
 #' @param keepMS1 logical value. If the MS1 intensities should be kept.
+#' @param keepEIC logical value. If the extract ion chromatogram (EIC) should be kept.
 #' @param pheno phenotype data. It should be a data.frame with at least one column named as "file" to 
 #'   list all the files passed to the function
 #' @param RTAdjustParam methods passed to \code{\link[xcms]{adjustRtime}}
@@ -284,6 +285,7 @@ runPrunedXcmsSet <- function(
     BPPARAM=bpparam()),
 
   keepMS1 = TRUE,
+  keepEIC = TRUE,
   
   # phenotype data
   pheno = NULL,
@@ -362,14 +364,16 @@ runPrunedXcmsSet <- function(
     mtab1 <- readRDS(pp$mtab[i])
 
     # === EIC start ===
-    scanList <- list( scanMeta = mtab1, scanIntensity = itab1 )      
-    eicList[[i]] <- mclapplyParam$fun_parallel(1:nrow(fd), function(i) {
-        f <- fd[i, ]
-        mzoff <- 20 * 1e-06 * f$mzmed
-        getEIC2(scanList, rt = c(f$rtmin - 30, f$rtmax + 30), 
+    if (keepEIC) {
+      scanList <- list( scanMeta = mtab1, scanIntensity = itab1 )      
+      eicList[[i]] <- mclapplyParam$fun_parallel(1:nrow(fd), function(i) {
+          f <- fd[i, ]
+          mzoff <- 20 * 1e-06 * f$mzmed
+          getEIC2(scanList, rt = c(f$rtmin - 30, f$rtmax + 30), 
                 mz = c(f$mzmin - mzoff, f$mzmax + mzoff), na.rm = TRUE)
-      }, mc.cores = mclapplyParam$mc.cores)
-    names(eicList[[i]]) <- fd$ID
+        }, mc.cores = mclapplyParam$mc.cores)
+      names(eicList[[i]]) <- fd$ID
+    } 
     # === EIC done ===
 
     if (!keepMS1) {    
@@ -379,10 +383,12 @@ runPrunedXcmsSet <- function(
     itable <- rbind(itable, itab1)
     mtable <- rbind(mtable, mtab1)
   }
-  eicList <- lapply(fd$ID, function(x) {
-      do.call(rbind, lapply(eicList, "[[", x))
-    })
-  names(eicList) <- fd$ID
+  if (keepEIC) {
+    eicList <- lapply(fd$ID, function(x) {
+        do.call(rbind, lapply(eicList, "[[", x))
+      })
+    names(eicList) <- fd$ID
+  }
   obj_xcmsScan <- new("xcmsScan", meta = mtable, intensity = itable, filter = pp$xcmsScanFilter, keepMS1 = TRUE)  
   
   ##### add consensus spectra #####
