@@ -1,7 +1,7 @@
 Package: xcmsViewer
 Type: Package
 Title: Comprehensive data analysis pipeline for untargeted LC-MS(/MS) based metabolomics experiment
-Version: 0.6.2
+Version: 0.6.3
 Date: 2022-10-31
 Author: Chen Meng
 Maintainer: Chen Meng <mengchen18@gmail.com>

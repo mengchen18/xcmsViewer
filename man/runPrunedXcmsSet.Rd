@@ -11,6 +11,7 @@ runPrunedXcmsSet(
   postfilter = c(5, 1000),
   noisefilter = c(ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
     ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, BPPARAM = bpparam()),
+  keepScans = TRUE,
   keepMS1 = TRUE,
   keepEIC = TRUE,
   pheno = NULL,
@@ -37,6 +38,8 @@ runPrunedXcmsSet(
 \item{postfilter}{post filter params to filter identified peaks, passed to \code{\link{chromPeaksPostFilter}}}
 
 \item{noisefilter}{passed to \code{getMetaIntensityTable}}
+
+\item{keepScans}{logical value. If the scans should be kept. If set to FALSE, keepMS1 and keepEIC will not be used.}
 
 \item{keepMS1}{logical value. If the MS1 intensities should be kept.}
 

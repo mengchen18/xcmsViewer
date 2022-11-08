@@ -38,7 +38,7 @@ chromPeaksMS2 <- function(x, mtab_files, fun_parallel = parallel::mclapply, ...)
   data.frame(
     ms2Scan = v,
     validMS2 = vms2
-    )
+  )
 }
 
 
@@ -59,12 +59,12 @@ chromPeaksMS2 <- function(x, mtab_files, fun_parallel = parallel::mclapply, ...)
 #' @export
 #' 
 peakPicking <- function(
-  files, param, tmpdir="xcmsViewerTemp",  
-  postfilter = c(5, 1000),
-  noisefilter = list(
-    ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
-    ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6),
-  BPPARAM=bpparam()
+    files, param, tmpdir="xcmsViewerTemp",  
+    postfilter = c(5, 1000),
+    noisefilter = list(
+      ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
+      ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6),
+    BPPARAM=bpparam()
 ) {
   
   # creating temp dirs 
@@ -112,14 +112,14 @@ peakPicking <- function(
     mtab$ID <- sub("F1.", fid, mtab$ID)
     saveRDS(mtab, file = file.path(dir_mtab, f1b))
     file_mtab <- c( file_mtab, file.path(dir_mtab, f1b) )
-
+    
     # add peaks MS2
     pks_ms2 <- chromPeaksMS2( x = xdata, mtab_files = file_mtab[loop] )
     attr(xdata, "chromPeakMS2") <- pks_ms2
     xdata <- chromPeaksPostFilter(
       x = xdata, itab = itab, mtab = mtab, postfilter = postfilter, BPPARAM = BPPARAM 
-      )
-
+    )
+    
     saveRDS(xdata, file = file.path(dir_peak, f1b))
     file_XCMSnExp <- c( file_XCMSnExp, file.path(dir_peak, f1b) )
   }
@@ -194,7 +194,7 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
   }
   
   tt <- lapply(1:nrow(fd), function(i) {
-
+    
     cc <- c("mzmed", "mzmin" ,"mzmax" ,"rtmed", "rtmin" , "rtmax", "npeaks", "peakidx")
     ii <- fd$peakidx[[i]]
     if (length(ii) == 1)
@@ -254,6 +254,7 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
 #' @param noisefilter passed to \code{getMetaIntensityTable}
 #' @param keepMS1 logical value. If the MS1 intensities should be kept.
 #' @param keepEIC logical value. If the extract ion chromatogram (EIC) should be kept.
+#' @param keepScans logical value. If the scans should be kept. If set to FALSE, keepMS1 and keepEIC will not be used. 
 #' @param pheno phenotype data. It should be a data.frame with at least one column named as "file" to 
 #'   list all the files passed to the function
 #' @param RTAdjustParam methods passed to \code{\link[xcms]{adjustRtime}}
@@ -273,7 +274,7 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
 #' @return An object of class "prunedXcmsSet"
 #' 
 runPrunedXcmsSet <- function( 
-  
+    
   # peakPicking
   files, 
   peakPickingParam = MatchedFilterParam(fwhm = 7.5), 
@@ -283,7 +284,8 @@ runPrunedXcmsSet <- function(
     ms1.noise = 100, ms1.maxPeaks = Inf, ms1.maxIdenticalInt = 20,
     ms2.noise = 30, ms2.maxPeaks = 100, ms2.maxIdenticalInt = 6, 
     BPPARAM=bpparam()),
-
+  
+  keepScans = TRUE,
   keepMS1 = TRUE,
   keepEIC = TRUE,
   
@@ -324,7 +326,7 @@ runPrunedXcmsSet <- function(
     pp <- peakPicking( 
       files = files, param = peakPickingParam, tmpdir=tmpdir, 
       noisefilter = noisefilter , postfilter = postfilter, BPPARAM = bplapplyParam
-      )
+    )
     
     saveRDS(pp, file = file.path(tmpdir, "04_object_PeakPicking.RDS"))
   } else
@@ -339,7 +341,7 @@ runPrunedXcmsSet <- function(
   if (fillMissing) {
     df <- fillChromPeaks(df, msLevel = 1L, BPPARAM = bplapplyParam)
   } 
-
+  
   cat("Extracting extended chrom peaks ...\n")
   peaks <- chromPeaks(df)
   peaks$ID <- rownames(peaks)
@@ -352,44 +354,48 @@ runPrunedXcmsSet <- function(
   fd$ID <- rownames(fd)
   fd$annot_ms1 <- character(nrow(fd))
   fd$annot_ms2 <- character(nrow(fd))
-
+  
   ########
-  cat("Extracting Scans and EICs ...\n")
-  itable <- c()
-  mtable <- c()
+  
+  itable <- data.frame()
+  mtable <- data.frame()
   eicList <- list()
-  for (i in 1:length(pp$itab)) {
-    print(paste(i, length(pp$itab), sep = '/'))
-    itab1 <- readRDS(pp$itab[i])
-    mtab1 <- readRDS(pp$mtab[i])
-
-    # === EIC start ===
-    if (keepEIC) {
-      scanList <- list( scanMeta = mtab1, scanIntensity = itab1 )      
-      eicList[[i]] <- mclapplyParam$fun_parallel(1:nrow(fd), function(i) {
+  
+  if (keepScans) {
+    cat("Extracting Scans and EICs ...\n")
+    for (i in 1:length(pp$itab)) {
+      print(paste(i, length(pp$itab), sep = '/'))
+      itab1 <- readRDS(pp$itab[i])
+      mtab1 <- readRDS(pp$mtab[i])
+      
+      # === EIC start ===
+      if (keepEIC) {
+        scanList <- list( scanMeta = mtab1, scanIntensity = itab1 )      
+        eicList[[i]] <- mclapplyParam$fun_parallel(1:nrow(fd), function(i) {
           f <- fd[i, ]
           mzoff <- 20 * 1e-06 * f$mzmed
           getEIC2(scanList, rt = c(f$rtmin - 30, f$rtmax + 30), 
-                mz = c(f$mzmin - mzoff, f$mzmax + mzoff), na.rm = TRUE)
+                  mz = c(f$mzmin - mzoff, f$mzmax + mzoff), na.rm = TRUE)
         }, mc.cores = mclapplyParam$mc.cores)
-      names(eicList[[i]]) <- fd$ID
-    } 
-    # === EIC done ===
-
-    if (!keepMS1) {    
-      mtab1 <- mtab1[which(mtab1$msLevel > 1), ]
-      itab1 <- itab1[itab1$ID %in% mtab1$ID, ]    
+        names(eicList[[i]]) <- fd$ID
+      } 
+      # === EIC done ===
+      
+      if (!keepMS1) {    
+        mtab1 <- mtab1[which(mtab1$msLevel > 1), ]
+        itab1 <- itab1[itab1$ID %in% mtab1$ID, ]    
+      }
+      itable <- rbind(itable, itab1)
+      mtable <- rbind(mtable, mtab1)
     }
-    itable <- rbind(itable, itab1)
-    mtable <- rbind(mtable, mtab1)
-  }
-  if (keepEIC) {
-    eicList <- lapply(fd$ID, function(x) {
+    if (keepEIC) {
+      eicList <- lapply(fd$ID, function(x) {
         do.call(rbind, lapply(eicList, "[[", x))
       })
-    names(eicList) <- fd$ID
+      names(eicList) <- fd$ID
+    }
   }
-  obj_xcmsScan <- new("xcmsScan", meta = mtable, intensity = itable, filter = pp$xcmsScanFilter, keepMS1 = TRUE)  
+  obj_xcmsScan <- new("xcmsScan", meta = mtable, intensity = itable, filter = pp$xcmsScanFilter, keepMS1 = keepMS1)  
   
   ##### add consensus spectra #####
   cat("Extracting consensus spectra ...\n")
@@ -425,7 +431,7 @@ runPrunedXcmsSet <- function(
     )
   })
   peaks$sample <- as.integer(as.character(peaks$sample))
-   
+  
   cat("Summarizing experiment ...\n")
   if (is.null(pheno)) {
     pheno <- pData(df)
@@ -454,14 +460,14 @@ runPrunedXcmsSet <- function(
     RTAdjustParam = RTAdjustParam, 
     peakGroupParam = peakGroupParam
   )
-
+  
   res <- new("prunedXcmsSet", 
              featureSet = obj_xcmsFeatureSet,
              peak = obj_xcmsPeak, 
              scan = obj_xcmsScan, 
              EIC = eicList)
   saveRDS(res, file = file.path(tmpdir, "05_object_noAnnot.RDS"))
-
+  
   ref <- prepRef(ref, mode = mode)
   amParam <- list(
     object = res, mode = mode, ref = ref, ppmtol = ppmtol
