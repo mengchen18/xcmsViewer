@@ -64,9 +64,10 @@ chromPeaksPostFilter <- function(
   rs <- bplapply(1:nrow(peaks), function(i) {
     i1 <- peaks[i, ]
     mzoff <-i1[["mz"]]*1e-6*25
-    irt <- which(dplyr::between(itable$rt, i1[["rtmin"]], i1[["rtmax"]]) & 
-                   dplyr::between(itable$mz, i1[["mz"]]-mzoff, i1[["mz"]]+mzoff) & 
-                   itable$fromFile == i1[["sample"]])
+    irt <- which(
+      dplyr::between(itable$rt, i1[["rtmin"]], i1[["rtmax"]]) & 
+      dplyr::between(itable$mz, i1[["mz"]]-mzoff, i1[["mz"]]+mzoff)
+      )
     ifelse(length(irt) < postfilter[1], FALSE, TRUE)
   }, BPPARAM = BPPARAM)
   rs <- unlist(rs)
