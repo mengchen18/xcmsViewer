@@ -1,0 +1,26 @@
+FROM rocker/shiny:4.2.0
+
+RUN apt-get update \
+	&& apt-get install -y \
+	apt-utils \
+	manpages-dev \
+	libnetcdf-dev \
+	libxml2-dev \
+	libglpk-dev \
+	libnode-dev  \
+	libz-dev
+
+RUN R -e "install.packages('BiocManager')"
+RUN R -e "BiocManager::install('omicsViewer')"
+RUN R -e "BiocManager::install('xcms')"
+RUN R -e "BiocManager::install('MAIT')"
+RUN R -e "install.packages('devtools')"
+RUN R -e "devtools::install_github('mengchen18/xcmsViewer')"
+
+
+RUN mkdir /home/shiny/data && \
+	mkdir /home/shiny/app
+
+COPY /usr/local/lib/R/site-library/xcmsViewer/extdata/*.R /home/shiny/app/
+
+CMD ["R", "-e", "shiny::runApp('/home/shiny/app', host = '0.0.0.0', port = 3838)"]
