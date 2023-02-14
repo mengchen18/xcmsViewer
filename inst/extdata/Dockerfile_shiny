@@ -21,6 +21,6 @@ RUN R -e "devtools::install_github('mengchen18/xcmsViewer')"
 RUN mkdir /home/shiny/data && \
 	mkdir /home/shiny/app
 
-COPY /usr/local/lib/R/site-library/xcmsViewer/extdata/*.R /home/shiny/app/
+COPY /usr/local/lib/R/site-library/xcmsViewer/extdata/ /home/shiny/app/
 
 CMD ["R", "-e", "shiny::runApp('/home/shiny/app', host = '0.0.0.0', port = 3838)"]
