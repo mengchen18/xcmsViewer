@@ -15,7 +15,7 @@ RUN R -e "BiocManager::install('omicsViewer')"
 RUN R -e "BiocManager::install('xcms')"
 RUN R -e "BiocManager::install('MAIT')"
 RUN R -e "install.packages('devtools')"
-RUN R -e "devtools::install_github('mengchen18/xcmsViewer')"
+RUN R -e "devtools::install_github('mengchen18/xcmsViewer', upgrade='never')"
 
 
 RUN mkdir /home/shiny/data && \
