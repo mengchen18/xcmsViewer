@@ -79,7 +79,12 @@ multi.t.test2 <- function(x, pheno, compare = NULL, median.center = FALSE, fillN
 #' 
 pca <- function(x, n = 6, prefix = "", fillNA = TRUE, samples = NULL) {
   
-  n <- min(n, ncol(x), nrow(x))
+  if (!is.null(samples)) {
+    if (is.logical(samples))
+      n <- min(length(samples), ncol(x), nrow(x)) else
+        n <- length(samples)
+  }
+  
   temp_sample <- matrix(NA, nrow = ncol(x), ncol = n)  
   temp_feature <- matrix(NA, nrow = nrow(x), ncol = n)
 
