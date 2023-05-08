@@ -152,10 +152,16 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
   exps <- lapply(files, readRDS)
   xdata <- do.call(c, exps)
   xdata <- groupChromPeaks(xdata, param = pgParam)
+  
   if (!is.null(rtParam) & length(files) > 1) {
-    xdata <- adjustRtime(xdata, param = rtParam)
-    xdata <- groupChromPeaks(xdata, param = pgParam)
-  } 
+    xdata_tmp <- try( adjustRtime(xdata, param = rtParam) )
+    if (inherits(xdata_tmp, "try-error")) {
+      warnings(
+        "Get an error at RT alighment step. "
+        "Possible reason: too few features to be used for RT alignment. ")
+    } else
+      xdata <- groupChromPeaks(xdata_tmp, param = pgParam)
+  }
   
   ##### redefine groups #####
   fd <- featureDefinitions(xdata)
