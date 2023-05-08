@@ -157,7 +157,7 @@ defineFeatures <- function(files, mtab_files, rtParam = NULL, pgParam = PeakDens
     xdata_tmp <- try( adjustRtime(xdata, param = rtParam) )
     if (inherits(xdata_tmp, "try-error")) {
       warnings(
-        "Get an error at RT alighment step. "
+        "Get an error at RT alighment step. ",
         "Possible reason: too few features to be used for RT alignment. ")
     } else
       xdata <- groupChromPeaks(xdata_tmp, param = pgParam)
